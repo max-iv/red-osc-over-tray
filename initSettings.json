@@ -1,0 +1,107 @@
+{
+  "deviceType": "basic",
+  "name": "01",
+  "arcPeriod": 60000,
+  "timeStamp": 1579620007645,
+  "lastArchive": 1579619979487,
+  "ledStateReading": {
+    "action": "reading",
+    "type": "scalar",
+    "value": 1,
+    "unit": "unit",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -2,
+        "low": -1,
+        "high": 2,
+        "hihi": 3
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "linkQuality": {
+    "action": "reading",
+    "type": "scalar",
+    "value": 61,
+    "unit": "/70",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": 30,
+        "low": 40,
+        "high": 71,
+        "hihi": 80
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "signalLevel": {
+    "action": "reading",
+    "type": "scalar",
+    "value": -49,
+    "unit": "dBm",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -70,
+        "low": -60,
+        "high": 0,
+        "hihi": 30
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "bt0RSSI": {
+    "action": "reading",
+    "type": "scalar",
+    "value": 0,
+    "unit": "dBm",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -70,
+        "low": -60,
+        "high": 0,
+        "hihi": 30
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "ledStateSetting": {
+    "action": "setting",
+    "type": "scalar",
+    "value": 0,
+    "unit": "unit",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -2,
+        "low": -1,
+        "high": 2,
+        "hihi": 3
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  }
+}

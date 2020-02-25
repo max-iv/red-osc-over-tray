@@ -1,18 +1,17 @@
-# blinky-lite-basic ui
+# blinky-lite-basic device-message-adapter
 ## need to add .env file with the following
-PROJECT=blinky-lite<br>
-ARCHIVETOPIC=blinky-lite\/+\/+\/reading<br>
-MONGODBIP=mongodb+srv://blinky-lite...<br>
-MQTTCLIENTID=blinky-lite-basic-core<br>
-MQTTSERVERIP=broker.shiftr.io<br>
-MQTTUSERNAME=xxx<br>
-MQTTPASSWORD=yyy<br>
-NEXMOAPIKEY=aaa<br>
-NEXMOAPISECRET=zzz<br>
-JWTKEYSECRET=bbb<br>
-SETTINGSPASSWORD=ccc<br>
-MAXDBSIZE=300000000<br>
-NODEREDCONFIGSECRET=ddd<br>
+MQTTPUBLISHTOPIC=blinky-lite\/basic\/01\/reading<br/>
+MQTTSUBSCRIBETOPIC=blinky-lite\/basic\/01\/setting<br/>
+MQTTCLIENTID=basic-01<br/>
+MQTTSERVERIP=broker.shiftr.io<br/>
+MQTTUSERNAME=xxxxxxxx<br/>
+MQTTPASSWORD=xxxxxxxx<br/>
+BT0MACADDR=xx:xx:xx:xx:xx:xx<br/>
+BT0RFCOMMPORT=0<br/>
+BT0SERIALPORT=/dev/rfcomm0<br/>
+JWTKEYSECRET=xxxxxxx<br>
+SETTINGSPASSWORD=xxxxxxxx<br>
+NODEREDCONFIGSECRET=xxxxxxxxx<br/>
 <br/>
 with no CR after the last line
 

@@ -1,5 +1,5 @@
 {
-  "name": "deviceViewer-ui",
+  "name": "blinky-lite-basic-device-message-adapter",
   "version": "1.0.0",
   "description": "",
   "main": "node_modules/node-red/red.js -s ./settings.js -u ./",
@@ -21,9 +21,8 @@
   "homepage": "",
   "dependencies": {
     "node-red": "^1.0.3",
-    "node-red-contrib-auth": "~0.1.7",
-    "node-red-contrib-mongodb3": "^2.0.1",
-    "node-red-contrib-nexmo": "~3.1.2",
-    "node-red-dashboard": "^2.19.3"
+    "node-red-contrib-auth": "^0.1.7",
+    "node-red-dashboard": "^2.19.3",
+    "node-red-node-serialport": "^0.10.0"
   }
 }
