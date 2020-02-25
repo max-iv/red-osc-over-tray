@@ -1,0 +1,29 @@
+{
+  "name": "deviceViewer-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "node_modules/node-red/red.js -s ./settings.js -u ./",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "node-red"
+  ],
+  "author": "David McGinnis",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {
+    "node-red": "^1.0.3",
+    "node-red-contrib-auth": "~0.1.7",
+    "node-red-contrib-mongodb3": "^2.0.1",
+    "node-red-contrib-nexmo": "~3.1.2",
+    "node-red-dashboard": "^2.19.3"
+  }
+}
