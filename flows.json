@@ -207,7 +207,7 @@
         "parity": "none",
         "stopbits": "1",
         "waitfor": "",
-        "newline": "12",
+        "newline": "64",
         "bin": "bin",
         "out": "count",
         "addchar": "",
@@ -272,7 +272,7 @@
         "qos": "0",
         "retain": "false",
         "broker": "79250bf3.365cc4",
-        "x": 1310,
+        "x": 1330,
         "y": 300,
         "wires": []
     },
@@ -315,8 +315,7 @@
         "y": 40,
         "wires": [
             [
-                "7461da25.d86ac4",
-                "54cc80ce.6f633"
+                "7461da25.d86ac4"
             ]
         ]
     },
@@ -341,7 +340,7 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "createSettings",
-        "func": "var device = flow.get('device');\n\nvar buffer = new ArrayBuffer(4);\nvar settingsView = new DataView(buffer);\nsettingsView.setFloat32(0, device.nsamples.value, true);\n\nreturn {topic:'settings',payload:Buffer.from(buffer)};\n",
+        "func": "var device = flow.get('device');\n\nvar buffer = new ArrayBuffer(64);\nvar settingsView = new DataView(buffer);\nsettingsView.setFloat32(0, device.nsamples.value, true);\n\nreturn {topic:'settings',payload:Buffer.from(buffer)};\n",
         "outputs": 1,
         "noerr": 0,
         "x": 1180,
@@ -1492,8 +1491,7 @@
         "y": 160,
         "wires": [
             [
-                "808c8dcc.1f0ac",
-                "a7bfc887.dfe878"
+                "808c8dcc.1f0ac"
             ]
         ]
     },
@@ -1585,33 +1583,5 @@
                 "e8fcfdd3.ae407"
             ]
         ]
-    },
-    {
-        "id": "a7bfc887.dfe878",
-        "type": "debug",
-        "z": "5f562f66.a301e",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "x": 360,
-        "y": 200,
-        "wires": []
-    },
-    {
-        "id": "54cc80ce.6f633",
-        "type": "debug",
-        "z": "5f562f66.a301e",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "x": 580,
-        "y": 100,
-        "wires": []
     }
 ]
