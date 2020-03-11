@@ -2,6 +2,7 @@
 ## need to add .env file with the following
 MQTTPUBLISHTOPIC=blinky-lite\/basic\/01\/reading<br/>
 MQTTSUBSCRIBETOPIC=blinky-lite\/basic\/01\/setting<br/>
+RESTARTDMATOPIC=blinky-lite\/basic\/01\/restartDma<br/>
 MQTTCLIENTID=basic-01<br/>
 MQTTSERVERIP=broker.shiftr.io<br/>
 MQTTUSERNAME=xxxxxxxx<br/>

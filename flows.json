@@ -256,7 +256,7 @@
         "name": "Teensy",
         "serial": "21ff842d.62f36c",
         "x": 70,
-        "y": 200,
+        "y": 300,
         "wires": [
             [
                 "d5761f6c.c46e6"
@@ -273,7 +273,7 @@
         "retain": "false",
         "broker": "79250bf3.365cc4",
         "x": 1310,
-        "y": 200,
+        "y": 300,
         "wires": []
     },
     {
@@ -283,7 +283,7 @@
         "name": "Teensy",
         "serial": "21ff842d.62f36c",
         "x": 1340,
-        "y": 140,
+        "y": 240,
         "wires": []
     },
     {
@@ -298,7 +298,9 @@
         "x": 110,
         "y": 40,
         "wires": [
-            []
+            [
+                "dc36009e.fdeeb"
+            ]
         ]
     },
     {
@@ -313,7 +315,8 @@
         "y": 40,
         "wires": [
             [
-                "7461da25.d86ac4"
+                "7461da25.d86ac4",
+                "54cc80ce.6f633"
             ]
         ]
     },
@@ -327,7 +330,7 @@
         "createDir": false,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 880,
+        "x": 940,
         "y": 40,
         "wires": [
             []
@@ -342,7 +345,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 1180,
-        "y": 140,
+        "y": 240,
         "wires": [
             [
                 "3f988ea4.7ee392"
@@ -362,7 +365,7 @@
         "once": true,
         "onceDelay": "1",
         "x": 140,
-        "y": 140,
+        "y": 240,
         "wires": [
             [
                 "163af492.5e952b"
@@ -380,7 +383,7 @@
         "sendError": false,
         "encoding": "none",
         "x": 380,
-        "y": 140,
+        "y": 240,
         "wires": [
             [
                 "53c95857.5f3d68"
@@ -396,7 +399,7 @@
         "action": "",
         "pretty": false,
         "x": 570,
-        "y": 140,
+        "y": 240,
         "wires": [
             [
                 "30f384ea.cf21fc"
@@ -412,7 +415,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 780,
-        "y": 140,
+        "y": 240,
         "wires": [
             [
                 "73924805.ed9568"
@@ -428,7 +431,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 810,
-        "y": 200,
+        "y": 300,
         "wires": [
             [
                 "9115ea87.0ca208"
@@ -447,7 +450,7 @@
         "oldrc": false,
         "name": "",
         "x": 280,
-        "y": 460,
+        "y": 560,
         "wires": [
             [
                 "afd71a05.ebd4e8"
@@ -469,7 +472,7 @@
         "once": true,
         "onceDelay": 0.1,
         "x": 120,
-        "y": 460,
+        "y": 560,
         "wires": [
             [
                 "f69c600b.9542",
@@ -486,7 +489,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 460,
-        "y": 460,
+        "y": 560,
         "wires": [
             []
         ]
@@ -499,7 +502,7 @@
         "func": "var jsonPretty = JSON.stringify(msg.payload,null,2);\nreturn {topic: msg.payload, payload:jsonPretty};",
         "outputs": 1,
         "noerr": 0,
-        "x": 670,
+        "x": 710,
         "y": 40,
         "wires": [
             [
@@ -516,7 +519,7 @@
         "func": "scalarAlarmScan(msg.payload, 'setting');\nflow.set('device', msg.payload); \n\nreturn msg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
         "outputs": 1,
         "noerr": 0,
-        "x": 460,
+        "x": 520,
         "y": 40,
         "wires": [
             [
@@ -529,14 +532,15 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "Readings Alarm Scan",
-        "func": "scalarAlarmScan(msg.payload, 'reading');\nflow.set('device', msg.payload); \nmsg.topic = flow.get('MQTTPUBLISHTOPIC');\n\nreturn msg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
+        "func": "scalarAlarmScan(msg.payload, 'reading');\nflow.set('device', msg.payload); \nvar restfulDevice  = flow.get('restfulDevice');\nmsg.topic = restfulDevice.project + '/' + restfulDevice.deviceType + '/' +restfulDevice.name + '/reading';\nreturn msg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
         "outputs": 1,
         "noerr": 0,
         "x": 1060,
-        "y": 200,
+        "y": 300,
         "wires": [
             [
-                "a3ff8e5.b79de7"
+                "a3ff8e5.b79de7",
+                "93049b70.2dc5c8"
             ]
         ]
     },
@@ -552,7 +556,7 @@
         "oldrc": false,
         "name": "",
         "x": 710,
-        "y": 540,
+        "y": 640,
         "wires": [
             [
                 "660483c4.ff812c"
@@ -577,7 +581,7 @@
         "randomUnits": "seconds",
         "drop": false,
         "x": 280,
-        "y": 540,
+        "y": 640,
         "wires": [
             [
                 "ea1c6a21.76e578"
@@ -593,7 +597,7 @@
         "outputs": 0,
         "noerr": 0,
         "x": 410,
-        "y": 280,
+        "y": 380,
         "wires": []
     },
     {
@@ -609,7 +613,7 @@
         "once": true,
         "onceDelay": 0.1,
         "x": 120,
-        "y": 280,
+        "y": 380,
         "wires": [
             [
                 "c3394354.07534"
@@ -625,7 +629,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 480,
-        "y": 540,
+        "y": 640,
         "wires": [
             [
                 "fb6723bd.68db"
@@ -641,7 +645,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 900,
-        "y": 520,
+        "y": 620,
         "wires": [
             []
         ]
@@ -662,7 +666,7 @@
         "randomUnits": "seconds",
         "drop": false,
         "x": 1000,
-        "y": 140,
+        "y": 240,
         "wires": [
             [
                 "f3f3f15.081c31"
@@ -674,11 +678,11 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "Save MQTTPUBLISHTOPIC Enviromental Variable",
-        "func": "flow.set(msg.topic,msg.payload);\nreturn null;",
+        "func": "var mqttArray = msg.payload.split('/');\nvar restfulDevice = \n{\n    project     : mqttArray[0],\n    deviceType  : mqttArray[1],\n    name        : mqttArray[2],\n};\nflow.set('restfulDevice', restfulDevice);\n\nreturn null;",
         "outputs": 0,
         "noerr": 0,
         "x": 470,
-        "y": 340,
+        "y": 440,
         "wires": []
     },
     {
@@ -694,7 +698,7 @@
         "once": true,
         "onceDelay": 0.1,
         "x": 150,
-        "y": 340,
+        "y": 440,
         "wires": [
             [
                 "54125822.397b88"
@@ -714,7 +718,7 @@
         "once": true,
         "onceDelay": 0.1,
         "x": 130,
-        "y": 400,
+        "y": 500,
         "wires": [
             [
                 "c91d065d.8d93a8"
@@ -730,7 +734,7 @@
         "outputs": 0,
         "noerr": 0,
         "x": 390,
-        "y": 400,
+        "y": 500,
         "wires": []
     },
     {
@@ -741,11 +745,11 @@
         "links": [
             "e6344b27.343f98"
         ],
-        "x": 315,
+        "x": 35,
         "y": 100,
         "wires": [
             [
-                "7461da25.d86ac4"
+                "8fd42733.128c98"
             ]
         ]
     },
@@ -758,7 +762,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 1070,
-        "y": 260,
+        "y": 360,
         "wires": [
             [
                 "107beeed.934ed1"
@@ -773,7 +777,7 @@
         "server": "44b51478.9c022c",
         "client": "",
         "x": 1290,
-        "y": 260,
+        "y": 360,
         "wires": []
     },
     {
@@ -785,7 +789,7 @@
             "756367ed.b63478"
         ],
         "x": 1135,
-        "y": 300,
+        "y": 400,
         "wires": [
             [
                 "107beeed.934ed1"
@@ -801,7 +805,7 @@
             "6c15c07a.68169"
         ],
         "x": 1235,
-        "y": 640,
+        "y": 740,
         "wires": []
     },
     {
@@ -813,7 +817,7 @@
             "65c2a6ff.a7b8f8"
         ],
         "x": 1235,
-        "y": 680,
+        "y": 780,
         "wires": []
     },
     {
@@ -825,7 +829,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 1050,
-        "y": 720,
+        "y": 820,
         "wires": [
             [
                 "756367ed.b63478"
@@ -839,7 +843,7 @@
         "name": "get Token",
         "tokenconfig": "144aea5f.fcbd96",
         "x": 900,
-        "y": 720,
+        "y": 820,
         "wires": [
             [
                 "cbd524b1.38ae68"
@@ -853,7 +857,7 @@
         "name": "decrypt Token",
         "tokenconfig": "144aea5f.fcbd96",
         "x": 940,
-        "y": 640,
+        "y": 740,
         "wires": [
             [
                 "95ced5d5.49b238"
@@ -869,7 +873,7 @@
         "outputs": 2,
         "noerr": 0,
         "x": 1110,
-        "y": 640,
+        "y": 740,
         "wires": [
             [
                 "e6344b27.343f98"
@@ -888,7 +892,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 750,
-        "y": 640,
+        "y": 740,
         "wires": [
             [
                 "3779d569.b1256a"
@@ -904,7 +908,7 @@
         "outputs": 2,
         "noerr": 0,
         "x": 730,
-        "y": 700,
+        "y": 800,
         "wires": [
             [
                 "756367ed.b63478"
@@ -937,7 +941,7 @@
         "repair": false,
         "outputs": 2,
         "x": 570,
-        "y": 640,
+        "y": 740,
         "wires": [
             [
                 "d53fb4ef.3c8a98"
@@ -956,7 +960,7 @@
         "action": "",
         "pretty": false,
         "x": 450,
-        "y": 640,
+        "y": 740,
         "wires": [
             [
                 "8f5a7ff7.5fa34"
@@ -971,7 +975,7 @@
         "server": "44b51478.9c022c",
         "client": "",
         "x": 300,
-        "y": 640,
+        "y": 740,
         "wires": [
             [
                 "3161d43f.21043c"
@@ -1126,7 +1130,7 @@
         "fieldType": "msg",
         "format": "css",
         "syntax": "mustache",
-        "template": "        :root \n        {\n          --color1: #415c71;\n          --color2: #547792;\n          --color3: #9eb5c7;\n          --color4: #c6c2bb;\n          --color5: #fdc300;\n          --big-text-size :300%;\n          --bold-text :900;\n          --vert-pad : 25px;\n          --horz-pad : 25px;\n        }\n        body \n        {\n          background-color: white !important;\n          padding-left:25px;\n          padding-right:25px;\n        }\n        \n        img \n        {\n          object-fit: contain;\n        }\n        a\n        {\n            color: white;\n        }\n        a:visited \n        { \n            color: var(--white);\n        }\n        a:hover \n        { \n            color: var(--color5);\n        }\n\n        .jumbotron \n        {\n          background-color: var(--color2) !important;\n          color: white;\n          padding-top:25px;\n          padding-bottom:25px;\n        }\n        .jumbotron-title\n        {\n          color:var(--color5);\n        }\n        .jumbotron-button\n        {\n          color: white;\n          background-color: var(--color1);\n       }\n        .card\n        {\n          background-color: var(--color2) !important;\n          text-align: center;\n        }\n        .card-body\n        {\n          background-color: var(--color3);;\n        }\n        .card-button\n        {\n          color: var(--color5) !important;\n          background-color: var(--color1) !important;\n          font-weight: bold;\n        }\n        .card-title\n        {\n          color: var(--color5);\n          font-weight: var(--bold-text);\n          font-size: var(--big-text-size);\n         }\n        .card-text\n        {\n          color: white;\n          text-align: left;\n          font-size: var(--big-text-size);\n        }\n        .tableHeading\n        {\n          color:var(--container-title-color);\n        }\n        .tableText\n        {\n          color:var(--container-text-color);\n          font-size: var(--big-text-size);\n        }\n       .vert-pad\n        {\n            padding-top:var(--vert-pad);;\n            padding-bottom:var(--vert-pad);;\n        }\n        .horz-pad\n        {\n            padding-left:var(--horz-pad);;\n            padding-right:var(--horz-pad);;\n        }\n        .big-text\n        {\n            font-size: var(--big-text-size);\n        }\n        .bold-text\n        {\n            font-weight: var(--bold-text);\n        }\n        .ui-slider\n        {\n            height: 90px;\n            background-color: var(--color1) !important;\n        }\n        .ui-slider .ui-slider-handle \n        {\n            height: 100px;\n            width: 100px;\n            background-color: var(--color5) !important;\n        }\n        .ui-dialog-titlebar-close \n        {\n            visibility: hidden;\n        }\n",
+        "template": "        :root \n        {\n          --color1: #415c71;\n          --color2: #547792;\n          --color3: #9eb5c7;\n          --color4: #c6c2bb;\n          --color5: #fdc300;\n          --big-text-size :300%;\n          --bold-text :900;\n          --vert-pad : 25px;\n          --horz-pad : 25px;\n        }\n        body \n        {\n          background-color: white !important;\n          padding-left:25px;\n          padding-right:25px;\n        }\n        \n        img \n        {\n          object-fit: contain;\n        }\n        a\n        {\n            color: white;\n        }\n        a:visited \n        { \n            color: var(--white);\n        }\n        a:hover \n        { \n            color: var(--color5);\n        }\n\n        .jumbotron \n        {\n          background-color: var(--color2) !important;\n          color: white;\n          padding-top:25px;\n          padding-bottom:25px;\n        }\n        .jumbotron-title\n        {\n          color:var(--color5);\n        }\n        .jumbotron-button\n        {\n          color: white;\n          background-color: var(--color1);\n       }\n        .card\n        {\n          background-color: var(--color2) !important;\n          text-align: center;\n        }\n        .card-body\n        {\n          background-color: var(--color3);;\n        }\n        .card-button\n        {\n          color: var(--color5) !important;\n          background-color: var(--color1) !important;\n          font-weight: bold;\n        }\n        .card-title\n        {\n          color: var(--color5);\n          font-weight: var(--bold-text);\n          font-size: var(--big-text-size);\n         }\n        .card-text\n        {\n          color: white;\n          text-align: left;\n          font-size: var(--big-text-size);\n        }\n        .danger-card\n        {\n          background-color: yellow !important;\n          text-align: center;\n        }\n        .danger-card-body\n        {\n          background-color: yellow;\n        }\n        .danger-card-button\n        {\n          color: yellow !important;\n          background-color: red !important;\n          font-weight: bold;\n        }\n        .danger-card-title\n        {\n          color: red;\n          font-weight: var(--bold-text);\n          font-size: var(--big-text-size);\n         }\n        .danger-card-text\n        {\n          color: white;\n          text-align: left;\n          font-size: var(--big-text-size);\n        }\n        .tableHeading\n        {\n          color:var(--container-title-color);\n        }\n        .tableText\n        {\n          color:var(--container-text-color);\n          font-size: var(--big-text-size);\n        }\n       .vert-pad\n        {\n            padding-top:var(--vert-pad);;\n            padding-bottom:var(--vert-pad);;\n        }\n        .horz-pad\n        {\n            padding-left:var(--horz-pad);;\n            padding-right:var(--horz-pad);;\n        }\n        .big-text\n        {\n            font-size: var(--big-text-size);\n        }\n        .bold-text\n        {\n            font-weight: var(--bold-text);\n        }\n        .ui-slider\n        {\n            height: 90px;\n            background-color: var(--color1) !important;\n        }\n        .ui-slider .ui-slider-handle \n        {\n            height: 100px;\n            width: 100px;\n            background-color: var(--color5) !important;\n        }\n        .ui-dialog-titlebar-close \n        {\n            visibility: hidden;\n        }\n",
         "output": "str",
         "x": 190,
         "y": 80,
@@ -1177,7 +1181,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 110,
-        "y": 800,
+        "y": 960,
         "wires": [
             [
                 "2a62d40e.6d364c"
@@ -1189,11 +1193,11 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "Set Name And Device Type",
-        "func": "msg.payload = {};\nmsg.payload['script'] = {};\nmsg.payload['script']['name'] = global.get('restfulDevice').name;\nmsg.payload['script']['deviceType'] = global.get('restfulDevice').deviceType;\nreturn msg;\n",
+        "func": "msg.payload['script'] = {};\nmsg.payload['script']['name'] = flow.get('restfulDevice').name;\nmsg.payload['script']['deviceType'] = flow.get('restfulDevice').deviceType;\nmsg.payload['script']['project'] = flow.get('restfulDevice').project;\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "x": 320,
-        "y": 800,
+        "y": 960,
         "wires": [
             [
                 "f946f23b.18995"
@@ -1212,7 +1216,7 @@
         "template": "Cosmic Interval {{{payload.script.name}}}",
         "output": "str",
         "x": 520,
-        "y": 800,
+        "y": 960,
         "wires": [
             [
                 "1fdd4371.d3d94d"
@@ -1225,7 +1229,7 @@
         "z": "5f562f66.a301e",
         "name": "",
         "x": 1150,
-        "y": 1000,
+        "y": 1200,
         "wires": []
     },
     {
@@ -1240,7 +1244,7 @@
         "template": "// StripChart Widget\n        class StripChart\n        {\n           constructor(plotConfig) \n            {\n                this.plotConfig = plotConfig;\n                this.plotStartTime = new Date().getTime();\n                this.layout =\n                {\n                    showlegend  : true,\n                    legend      : { x: 0, y: 1.15},\n                    height      : plotConfig.height,\n                    width       : plotConfig.width,\n                    xaxis       :\n                    {\n                        title: 'Seconds since ' + new Date(this.plotStartTime).toLocaleString(),\n                    },\n                    yaxis:\n                    {\n                        title           : plotConfig.trace1Title,\n                        titlefont       : {color: plotConfig.trace1Color},\n                        tickfont        : {color:plotConfig.trace1Color},\n                        gridcolor       : plotConfig.trace1GridColor,\n                        zerolinecolor   : plotConfig.trace1GridColor,\n                        linecolor       : plotConfig.trace1GridColor,\n//                        range: [0, 2]\n        \n                    },\n                    yaxis2:\n                    {\n                        title           : plotConfig.trace2Title,\n                        titlefont       : {color: plotConfig.trace2Color},\n                        tickfont        : {color:plotConfig.trace2Color},\n                        gridcolor       : plotConfig.trace2GridColor,\n                        zerolinecolor   : plotConfig.trace2GridColor,\n                        linecolor       : plotConfig.trace2GridColor,\n                        overlaying: 'y',\n                        side: 'right',\n//                        range: [0, 2]\n                    },\n                    margin: \n                        {\n                            t: 30, //top margin\n        //                    l: 0, //left margin\n        //                    r: 0, //right margin\n        //                    b: 20 //bottom margin\n                        },\n                };\n                this.trace1 = \n                {\n                    x: [],\n                    y: [],\n                    name: plotConfig.trace1Title,\n                    yaxis: 'y1',\n                    type: 'scatter',\n                    mode: 'lines',\n                    line: {color: this.plotConfig.trace1Color}\n            \n                };\n                this.trace2 = \n                {\n                    x: [],\n                    y: [],\n                    name: plotConfig.trace2Title,\n                    yaxis: 'y2',\n                    type: 'scatter',\n                    mode: 'lines',\n                    line: {color: this.plotConfig.trace2Color}\n            \n                };\n            }\n            addTracePoints(trace1Pt, trace2Pt)\n            {\n                var now = (new Date().getTime() - this.plotStartTime) / 1000;\n                var plotBeginning = now - this.plotConfig.plotLength;\n                var removeDone = false;\n                while(!removeDone)\n                {\n                    if (this.trace1.x[0] < plotBeginning)\n                    {\n                        this.trace1.x.shift();\n                        this.trace1.y.shift();\n                        this.trace2.x.shift();\n                        this.trace2.y.shift();\n                    }\n                    else\n                    {\n                        removeDone = true;\n                    }\n                }\n        \n                this.trace1.x.push(now);\n                this.trace1.y.push(trace1Pt);\n                this.trace2.x.push(now);\n                this.trace2.y.push(trace2Pt);\n                Plotly.newPlot(this.plotConfig.htmlId, [this.trace1, this.trace2], this.layout);\n            }\n        }\n",
         "output": "str",
         "x": 700,
-        "y": 800,
+        "y": 960,
         "wires": [
             [
                 "a3604a95.db42b8"
@@ -1256,10 +1260,10 @@
         "fieldType": "msg",
         "format": "javascript",
         "syntax": "mustache",
-        "template": "// Global Javascript\n        var plotConfig = \n        {\n            trace1Title : 'Count Per Minute',\n            trace1Color : '#557a95',\n            trace1GridColor : '#beceda',\n            trace2Title : 'Average Interval (uS)',\n            trace2Color : '#f2a31f',\n            plotLength  : 600,\n            width   : '',\n            height  :   '500',\n            htmlId  :   'historyStripChart'\n        };\n        var restfulDevice = \n        {\n            deviceType  : '{{{payload.script.deviceType}}}',\n            name        : '{{{payload.script.name}}}'\n        };\n        var mqttDevice = null;\n        var device = null;\n        let historyStripChart = new StripChart(plotConfig);\n        var nsamplesChanged = false;\n        var intervalArray = [];\n        var audioAlarm = new Audio('/audio/geiger1.ogg');\n        var audioAlarmOn = false;\n\n        var archiveRequestList = [];\n        var archiveList = [];\n\n        useWebSockets(true);\n        function onDocumentReady()\n        {\n            $('#nsamplesButtonId').hide();\n            $('#lightningID').hide();\n        }\n        function onWebSocketOpen()\n        {\n//            getArchive(24);\n        }\n        function onWebSocketClose()\n        {\n            \n        }\n        function onWebSocketMessage(msg)\n        {\n            switch(msg.topic)\n            {\n                case 'readings':\n                    if (msg.mqttDevice.name == restfulDevice.name)\n                    {\n                        heartbeat();\n                        device = msg.payload;\n                        mqttDevice = msg.mqttDevice;\n                        updateDmaReadings();\n                    }\n                    break;\n                case 'getArchiveValues':\n                    if (msg.userID == userID)\n                    {\n                        if ((msg.payload.device.deviceType == restfulDevice.deviceType) && (msg.payload.device.name == restfulDevice.name) )\n                            putArchiveValues(msg.payload);\n                    }\n                    break;\n                case 'getJwtToken':\n                    if (msg.userID == userID) loadJwtToken(msg);\n                    break;\n                case 'settingAcknowledge':\n                    if (msg.userID == userID)\n                    {\n                        if (msg.payload != 'Success!') acknowledgeDialog('Acknowledge', 'Setting', msg.payload);\n                    }\n                    break;\n                default:\n                // code block\n            }\n        }\n        function nsamplesChange()\n        {\n            nsamplesChanged = true;\n            $('#nsamplesButtonId').show();\n\n        }\n        function setScalarValue(settingValue, attrName)\n        {\n            var settingAttr = device[attrName];\n            if ( (settingAttr.alarm.limits.lolo <= settingValue) && (settingValue <= settingAttr.alarm.limits.hihi) )\n            {\n                settingAttr.value = settingValue;\n                var mqttMessage = \n                {\n                    topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                    payload :  device\n                };\n                checkLogin(sendSettingToMqtt, mqttMessage);\n            } \n            else\n            {\n                acknowledgeDialog('Acknowledge', 'Error', 'Entry outside range! (' + settingAttr.alarm.limits.lolo.toString() + '-' + settingAttr.alarm.limits.hihi.toString() + ' ' + settingAttr.unit);\n            }\n        }\n        function nsamples()\n        {\n            $('#nsamplesButtonId').hide();\n            if (isNaN($('#nsamplesInputId').val()))\n            {\n                nsamplesChanged = false;\n                return;\n            }\n            setScalarValue(Number($('#nsamplesInputId').val()), 'nsamples');\n            nsamplesChanged = false;\n        }\n        function toggleSound()\n        {\n            audioAlarmOn = !audioAlarmOn;\n            if(audioAlarmOn)\n            {\n                $('#soundButtonId').css('color', 'black'); \n                $('#soundButtonId').css('background-color', 'green'); \n                $('#soundButtonId').text('On'); \n            }\n            else\n            {\n                $('#soundButtonId').css('color', 'black'); \n                $('#soundButtonId').css('background-color', 'grey'); \n                $('#soundButtonId').text('Off'); \n            }\n\n        }\n",
+        "template": "// Global Javascript\n        var plotConfig = \n        {\n            trace1Title : 'Count Per Minute',\n            trace1Color : '#557a95',\n            trace1GridColor : '#beceda',\n            trace2Title : 'Average Interval (uS)',\n            trace2Color : '#f2a31f',\n            plotLength  : 600,\n            width   : '',\n            height  :   '500',\n            htmlId  :   'historyStripChart'\n        };\n        var restfulDevice = \n        {\n            deviceType  : '{{{payload.script.deviceType}}}',\n            name        : '{{{payload.script.name}}}',\n            project     : '{{{payload.script.project}}}'\n        };\n        var mqttDevice = null;\n        var device = null;\n        let historyStripChart = new StripChart(plotConfig);\n        var nsamplesChanged = false;\n        var intervalArray = [];\n        var audioAlarm = new Audio('/audio/geiger1.ogg');\n        var audioAlarmOn = false;\n\n        var archiveRequestList = [];\n        var archiveList = [];\n\n        useWebSockets(true);\n        function onDocumentReady()\n        {\n            $('#nsamplesButtonId').hide();\n            $('#lightningID').hide();\n        }\n        function onWebSocketOpen()\n        {\n//            getArchive(24);\n        }\n        function onWebSocketClose()\n        {\n            \n        }\n        function onWebSocketMessage(msg)\n        {\n            switch(msg.topic)\n            {\n                case 'readings':\n                    if (msg.mqttDevice.name == restfulDevice.name)\n                    {\n                        heartbeat();\n                        device = msg.payload;\n                        mqttDevice = msg.mqttDevice;\n                        updateDmaReadings();\n                    }\n                    break;\n                case 'getArchiveValues':\n                    if (msg.userID == userID)\n                    {\n                        if ((msg.payload.device.deviceType == restfulDevice.deviceType) && (msg.payload.device.name == restfulDevice.name) )\n                            putArchiveValues(msg.payload);\n                    }\n                    break;\n                case 'getJwtToken':\n                    if (msg.userID == userID) loadJwtToken(msg);\n                    break;\n                case 'settingAcknowledge':\n                    if (msg.userID == userID)\n                    {\n                        if (msg.payload != 'Success!') acknowledgeDialog('Acknowledge', 'Setting', msg.payload);\n                    }\n                    break;\n                default:\n                // code block\n            }\n        }\n        function nsamplesChange()\n        {\n            nsamplesChanged = true;\n            $('#nsamplesButtonId').show();\n\n        }\n        function setScalarValue(settingValue, attrName)\n        {\n            var settingAttr = device[attrName];\n            if ( (settingAttr.alarm.limits.lolo <= settingValue) && (settingValue <= settingAttr.alarm.limits.hihi) )\n            {\n                settingAttr.value = settingValue;\n                var mqttMessage = \n                {\n                    topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                    payload :  device\n                };\n                checkLogin(sendSettingToMqtt, mqttMessage);\n            } \n            else\n            {\n                acknowledgeDialog('Acknowledge', 'Error', 'Entry outside range! (' + settingAttr.alarm.limits.lolo.toString() + '-' + settingAttr.alarm.limits.hihi.toString() + ' ' + settingAttr.unit);\n            }\n        }\n        function nsamples()\n        {\n            $('#nsamplesButtonId').hide();\n            if (isNaN($('#nsamplesInputId').val()))\n            {\n                nsamplesChanged = false;\n                return;\n            }\n            setScalarValue(Number($('#nsamplesInputId').val()), 'nsamples');\n            nsamplesChanged = false;\n        }\n        function toggleSound()\n        {\n            audioAlarmOn = !audioAlarmOn;\n            if(audioAlarmOn)\n            {\n                $('#soundButtonId').css('color', 'black'); \n                $('#soundButtonId').css('background-color', 'green'); \n                $('#soundButtonId').text('On'); \n            }\n            else\n            {\n                $('#soundButtonId').css('color', 'black'); \n                $('#soundButtonId').css('background-color', 'grey'); \n                $('#soundButtonId').text('Off'); \n            }\n\n        }\n",
         "output": "str",
         "x": 670,
-        "y": 840,
+        "y": 1000,
         "wires": [
             [
                 "c574b0f3.ce5a1"
@@ -1275,10 +1279,10 @@
         "fieldType": "msg",
         "format": "javascript",
         "syntax": "mustache",
-        "template": "// Update Readings Javascript\n        function updateDmaReadings()\n        {\n            if (audioAlarmOn)\n            {\n                var playPromise = audioAlarm.play();\n                if (playPromise !== undefined) \n                {\n                    playPromise.then(_ => \n                    {\n                    // Automatic playback started!\n                    // Show playing UI.\n                    }).catch(error => \n                    {\n                    // Auto-play was prevented\n                    // Show paused UI.\n                    });\n                 }\n            }\n\n            $('#linkQualityId').text(device.linkQuality.value);\n            $('#signalLevelId').text(device.signalLevel.value);\n            $('#bt0RSSIId').text(device.bt0RSSI.value);\n            var avgIntervalReading = device.avgInterval.value;\n            var cpmReading = device.cpm.value;\n            var intervalReading = device.interval.value;\n            historyStripChart.addTracePoints(cpmReading, avgIntervalReading);\n            $('#cpmReadingId').text(cpmReading);\n            $('#avgIntervalReadingId').text(avgIntervalReading);\n            $('#intervalReadingId').text(intervalReading);\n            if (!nsamplesChanged)\n            {\n                $('#nsamplesInputId').val(device.nsamples.value);\n            }\n            intervalArray.push(0.01 * Math.round(intervalReading / 10));\n            while (intervalArray.length > 500)\n            {\n                intervalArray.shift();\n            }\n            var layout = {title: \"Interval (S)\", xaxis: {title: \"Interval (S)\"}, yaxis: {title: \"Count\"}};\n\n//            Plotly.newPlot('intervalHistogramChart', [{x: intervalArray, type:'histogram',  autobinx: false, xbins: {end: 10,size: 0.5,start: 0} }]);\n            Plotly.newPlot('intervalHistogramChart', [{x: intervalArray, type:'histogram',  xbins: {size: 0.5,start: 0} }],layout);\n            $('#lightningID').show();\n            setTimeout(function(){$('#lightningID').hide();},500);\n            \n        }\n",
+        "template": "// Update Readings Javascript\n        function updateDmaReadings()\n        {\n            if (audioAlarmOn)\n            {\n                var playPromise = audioAlarm.play();\n                if (playPromise !== undefined) \n                {\n                    playPromise.then(_ => \n                    {\n                    // Automatic playback started!\n                    // Show playing UI.\n                    }).catch(error => \n                    {\n                    // Auto-play was prevented\n                    // Show paused UI.\n                    });\n                 }\n            }\n\n            $('#linkQualityId').text(device.linkQuality.value);\n            $('#signalLevelId').text(device.signalLevel.value);\n            $('#bt0RSSIId').text(device.bt0RSSI.value);\n            var avgIntervalReading = device.avgInterval.value;\n            var cpmReading = device.cpm.value;\n            var intervalReading = device.interval.value;\n            historyStripChart.addTracePoints(cpmReading, avgIntervalReading);\n            $('#cpmReadingId').text(cpmReading);\n            $('#avgIntervalReadingId').text(avgIntervalReading);\n            $('#intervalReadingId').text(intervalReading);\n            if (!nsamplesChanged)\n            {\n                $('#nsamplesInputId').val(device.nsamples.value);\n            }\n            intervalArray.push(0.01 * Math.round(intervalReading / 10));\n            while (intervalArray.length > 1000)\n            {\n                intervalArray.shift();\n            }\n            var layout = {title: \"Interval (S)\", xaxis: {title: \"Interval (S)\"}, yaxis: {title: \"Count\"}};\n\n//            Plotly.newPlot('intervalHistogramChart', [{x: intervalArray, type:'histogram',  autobinx: false, xbins: {end: 10,size: 0.5,start: 0} }]);\n            Plotly.newPlot('intervalHistogramChart', [{x: intervalArray, type:'histogram',  xbins: {size: 0.5,start: 0} }],layout);\n            $('#lightningID').show();\n            setTimeout(function(){$('#lightningID').hide();},500);\n            \n        }\n",
         "output": "str",
         "x": 700,
-        "y": 880,
+        "y": 1040,
         "wires": [
             [
                 "ce43ed6.d50ad1"
@@ -1297,10 +1301,10 @@
         "template": "// Edit Temp JavaScript\n       $( function() \n        {\n            $( \"#editDeviceDialog\" ).dialog(\n                {\n//                    closeOnEscape: false,\n//                    open: function(event, ui) {$(\".ui-dialog-titlebar-close\", ui.dialog | ui).hide();},\n                    width:    640,\n                    autoOpen: false,\n                    buttons:\n                    [\n                        {\n                            text: \"Set\",\n                            click: function() {setDevice(); $( this ).dialog( \"close\" );},\n                            showText: false\n                        },\n                        {\n                            text: \"Cancel\",\n                            click: function() \n                            {\n                                $( this ).dialog( \"close\" ); \n                            },\n                            showText: false\n                        }\n                    ]\n                });\n        } );\n        function editDevice(attrName)\n        {\n            $( \"#editDeviceDialog\" ).dialog( \"option\", \"title\", \"Edit\"); \n            editedAttribute = attrName;\n            $( \"#editDeviceDialogAttribute\").html(attrName);\n\n            var attr = device[attrName];\n            $( \"#loloAlarm\").val(attr.alarm.limits.lolo);\n            $( \"#lowAlarm\").val(attr.alarm.limits.low);\n            $( \"#highAlarm\").val(attr.alarm.limits.high);\n            $( \"#hihiAlarm\").val(attr.alarm.limits.hihi);\n            $( \"#notifyName\").val(attr.alarm.notify.name);\n            $( \"#notifyNumber\").val(attr.alarm.notify.number);\n\n            $( \"#editDeviceDialog\" ).dialog( \"open\" );\n        }\n        function setDevice()\n        {\n            var attr = device[editedAttribute];\n            if (isNaN($('#loloAlarm').val()) \n                || isNaN($('#lowAlarm').val()) \n                || isNaN($('#highAlarm').val()) \n                || isNaN($('#hihiAlarm').val()))\n            {\n                acknowledgeDialog('Error', 'Entry not a number!', editedAttribute);\n                editedAttribute = '';\n                return;\n            }\n            editedAttribute = '';\n\n            attr.alarm.limits.lolo = Number($( \"#loloAlarm\").val());\n            attr.alarm.limits.low = Number($( \"#lowAlarm\").val());\n            attr.alarm.limits.high = Number($( \"#highAlarm\").val());\n            attr.alarm.limits.hihi = Number($( \"#hihiAlarm\").val());\n            attr.alarm.notify.number =  $( \"#notifyNumber\").val();\n            attr.alarm.notify.name = $( \"#notifyName\").val();\n            var mqttMessage = \n            {\n                topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                payload :  device\n            };\n            checkLogin(sendSettingToMqtt, mqttMessage);\n        }\n",
         "output": "str",
         "x": 680,
-        "y": 960,
+        "y": 1120,
         "wires": [
             [
-                "ea612d01.18bef"
+                "4bd8d01f.eb1ee"
             ]
         ]
     },
@@ -1313,10 +1317,10 @@
         "fieldType": "msg",
         "format": "javascript",
         "syntax": "mustache",
-        "template": "{{{payload.script.stripChartWidget}}}\n{{{payload.script.global}}}\n{{{payload.script.updateReadings}}}\n{{{payload.script.archive}}}\n{{{payload.script.editDevice}}}\n",
+        "template": "{{{payload.script.stripChartWidget}}}\n{{{payload.script.global}}}\n{{{payload.script.updateReadings}}}\n{{{payload.script.archive}}}\n{{{payload.script.editDevice}}}\n{{{payload.script.dangerZone}}}\n",
         "output": "str",
         "x": 660,
-        "y": 1000,
+        "y": 1200,
         "wires": [
             [
                 "c637fc55.d58d"
@@ -1332,10 +1336,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "    <div width=\"100%\">\n        <div class='row' style='padding-bottom: 25px;'>\n            <div class='col-md-12' align='center'>\n{{{payload.html.dashboard}}}\n            </div>\n        </div>\n        <div class='row' style='padding-bottom: 25px;'>\n            <div class='col-md-12' align='center'>\n{{{payload.html.history}}}\n            </div>\n        </div>\n        <div class='row' style='padding-bottom: 25px;'>\n            <div class='col-md-12' align='center'>\n{{{payload.html.histogram}}}\n            </div>\n        </div>\n        <div class='row' style='padding-bottom: 25px;'>\n            <div class='col-md-12'>\n{{{payload.html.wifimon}}}\n            </div>\n        </div>\n    </div>",
+        "template": "    <div width=\"100%\">\n        <div class='row' style='padding-bottom: 25px;'>\n            <div class='col-md-12' align='center'>\n{{{payload.html.dashboard}}}\n            </div>\n        </div>\n        <div class='row' style='padding-bottom: 25px;'>\n            <div class='col-md-12' align='center'>\n{{{payload.html.histogram}}}\n            </div>\n        </div>\n        <div class='row' style='padding-bottom: 25px;'>\n            <div class='col-md-12' align='center'>\n{{{payload.html.history}}}\n            </div>\n        </div>\n        <div class='row' style='padding-bottom: 25px;'>\n            <div class='col-md-12'>\n{{{payload.html.wifimon}}}\n            </div>\n        </div>\n        <div class='row' style='padding-bottom: 25px;'>\n            <div class='col-md-12'>\n{{{payload.html.dangerZone}}}\n            </div>\n        </div>\n    </div>",
         "output": "str",
         "x": 970,
-        "y": 1000,
+        "y": 1200,
         "wires": [
             [
                 "3bf18bd2.6f9704"
@@ -1354,10 +1358,10 @@
         "template": "<!-- Dashboard HTML -->\n                <div class='card'>\n                    <p class='card-title'>WiFi Connection</p>\n                    <div class='card-body' align=\"center\">\n                        <div class='row'  style='padding-top: 0px;'>\n                            <table width='100%'>\n                                <tr>\n                                    <td width='60%' >\n                                        <span class='card-text' >Device Update</span>\n                                    </td>\n                                    <td width='20%' align='center'></td>\n                                    <td width='20%' align='center'>\n                                        <img src='/img/heartRed.png' id='heartBeatID' width='100px' height='100px'/>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td width='60%' >\n                                        <span class='card-text' >Signal Level (dBm)</span>\n                                    </td>\n                                    <td width='20%' align='center'></td>\n                                    <td width='20%' align='center'>\n                                        <span class='card-text' id='signalLevelId' >-100</span>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td width='60%' >\n                                        <span class='card-text' >Link Quality (/70)</span>\n                                    </td>\n                                    <td width='20%' align='center'></td>\n                                    <td width='20%' align='center'>\n                                        <span class='card-text' id='linkQualityId' >-1</span>\n                                    </td>\n                                </tr>\n                            </table>\n                        </div>\n                    </div>\n                </div>\n",
         "output": "str",
         "x": 990,
-        "y": 960,
+        "y": 1120,
         "wires": [
             [
-                "e8fcfdd3.ae407"
+                "3efd96de.abb7aa"
             ]
         ]
     },
@@ -1373,7 +1377,7 @@
         "template": "<!-- Archive HTML -->\n                <div class='card'>\n                    <p class='card-title'>Archive</p>\n                    <div class='card-body' align=\"center\">\n                        <div class='row' >\n                            <table width='100%'>\n                                <tr>\n                                    <td width='10%' align='center'>\n                                        <button class='btn btn-block big-text' style='background-color:var(--color1);color:var(--color5)' id=\"archive2hrButton\" onclick=\"getArchive(2)\" >2</button>\n                                    </td>\n                                    <td width='10%'  align='center'>\n                                        <button class='btn btn-block big-text' style='background-color:var(--color1);color:var(--color5)' id=\"archive4hrButton\" onclick=\"getArchive(4)\" >4</button>\n                                    </td>\n                                    <td width='10%'  align='center'>\n                                        <button class='btn btn-block big-text' style='background-color:var(--color1);color:var(--color5)' id=\"archive8hrButton\" onclick=\"getArchive(8)\" >8</button>\n                                    </td>\n                                    <td width='10%'  align='center'>\n                                        <button class='btn btn-block big-text' style='background-color:var(--color1);color:var(--color5)' id=\"archive24hrButton\" onclick=\"getArchive(24)\" >24</button>\n                                    </td>\n                                    <td width='10%' align='center'>\n                                        <button class='btn btn-block big-text' style='background-color:var(--color1);color:var(--color5)' id=\"archive72hrButton\" onclick=\"getArchive(72)\" >72</button>\n                                    </td>\n                                    <td width='10%' align='center'>\n                                        <button class='btn btn-block big-text' style='background-color:var(--color1);color:var(--color5)' id=\"archive168hrButton\" onclick=\"getArchive(168)\" >168</button>\n                                    </td>\n                                    <td width='10%' align='center'>\n                                        <span class='big-text' >Hours</span>\n                                    </td>\n                                </tr>\n                            </table>\n                        </div>\n                        <div class='row vert-pad'>\n                            <div class='col-md-12'>\n                                <div id=\"archiveChart\" width=\"100%\" ></div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n",
         "output": "str",
         "x": 990,
-        "y": 920,
+        "y": 1080,
         "wires": [
             [
                 "90c7a925.242958"
@@ -1392,7 +1396,7 @@
         "template": "<!-- History HTML -->\n                <div class='card'>\n                    <p class='card-title'>History</p>\n                    <div class='card-body' align=\"center\">\n                        <div id=\"historyStripChart\" width=\"100%\" ></div>\n                    </div>\n                </div>\n",
         "output": "str",
         "x": 990,
-        "y": 840,
+        "y": 1000,
         "wires": [
             [
                 "3bce7c3c.446784"
@@ -1411,7 +1415,7 @@
         "template": "<!-- Dashboard HTML -->\n                <div class='card'>\n                    <p class='card-title'>Dashboard</p>\n                    <div class='card-body' align=\"center\">\n                        <div class='row' style='padding-bottom: 25px;'>\n                            <table width='100%'>\n                                <tr>\n                                    <td width='60%' >\n                                        <span class='card-text' >Counts Per Minute</span>\n                                    </td>\n                                    <td width='20%' align='center'>\n                                        <span class='card-text' id='cpmReadingId' >-100</span>\n                                    </td>\n                                    <td width='20%'>\n                                        <button class='btn btn-block card-button big-text' onclick=\"editDevice('cpm')\" >Edit</button>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td width='60%' >\n                                        <span class='card-text' >Avg. Interval (uS)</span>\n                                    </td>\n                                    <td width='20%' align='center'>\n                                        <span class='card-text' id='avgIntervalReadingId' >-100</span>\n                                    </td>\n                                    <td width='20%'>\n                                        <button class='btn btn-block card-button big-text' onclick=\"editDevice('avgInterval')\" >Edit</button>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td width='60%' >\n                                        <span class='card-text' >Interval (uS)</span>\n                                    </td>\n                                    <td width='20%' align='center'>\n                                        <span class='card-text' id='intervalReadingId' >-100</span>\n                                    </td>\n                                    <td width='20%'>\n                                        <button class='btn btn-block card-button big-text' onclick=\"editDevice('interval')\" >Edit</button>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td width='60%'>\n                                        <span class='card-text' >Filter Samples</span>\n                                    </td>\n                                    <td width='20%'>\n                                        <input id=\"nsamplesInputId\" type=\"text\" value=\"0\" class=\"big-text\"  size=\"8\" oninput=\"nsamplesChange()\"/>\n                                    </td>\n                                    <td width='20%'>\n                                        <button class='btn btn-block card-button big-text' id=\"nsamplesButtonId\" onclick=\"nsamples()\" >&#10003;</button>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td width='60%' >\n                                        <span class='card-text' >Cosmic Sound</span>\n                                    </td>\n                                    <td width='20%' align='center'>\n                                        <img id='lightningID' src=\"/img/lightning.png\" height='70px'/>\n                                    </td>\n                                    <td width='20%' align='center'>\n                                        <button class='btn btn-block big-text' style='background-color:grey;color:black' id='soundButtonId' onclick=\"toggleSound()\" >Off</button>\n                                    </td>\n                                </tr>\n                            </table>\n                        </div>\n                   </div>\n                </div>\n                <div id=\"editDeviceDialog\" title=\"Edit Device\" class='card'>\n                    <p class='card-title' id='editDeviceDialogAttribute'>Attribute</p>\n                    <div class='card-body'>\n                        <table>\n                            <tr>\n                                <td width=\"70%\" align=\"left\">  <span class=\"tableHeading tableText\">LoLo</span></td>\n                                <td width=\"30%\" align=\"right\"><input class=\"form-control tableText\" id=\"loloAlarm\" type=\"text\" value=\"0\" /></td>\n                            </tr>\n                            <tr>\n                                <td width=\"70%\" align=\"left\">  <span class=\"tableHeading tableText\">LOW</span></td>\n                                <td width=\"30%\" align=\"right\"><input class=\"form-control tableText\" id=\"lowAlarm\" type=\"text\" value=\"0\" /></td>\n                            </tr>\n                            <tr>\n                                <td width=\"70%\" align=\"left\">  <span class=\"tableHeading tableText\">HIGH</span></td>\n                                <td width=\"30%\" align=\"right\"><input class=\"form-control tableText\" id=\"highAlarm\" type=\"text\" value=\"0\" /></td>\n                            </tr>\n                            <tr>\n                                <td width=\"70%\" align=\"left\">  <span class=\"tableHeading tableText\">HiHi</span></td>\n                                <td width=\"30%\" align=\"right\"><input class=\"form-control tableText\" id=\"hihiAlarm\" type=\"text\" value=\"0\" /></td>\n                            </tr>\n                            <tr>\n                                <td width=\"70%\" align=\"left\">  <span class=\"tableHeading tableText\">Notify Name</span></td>\n                                <td width=\"30%\" align=\"right\"><input class=\"form-control tableText\" id=\"notifyName\" type=\"text\" value=\"\" /></td>\n                            </tr>\n                            <tr>\n                                <td width=\"70%\" align=\"left\">  <span class=\"tableHeading tableText\">Notify Number</span></td>\n                                <td width=\"30%\" align=\"right\"><input class=\"form-control tableText\" id=\"notifyNumber\" type=\"text\" value=\"\" /></td>\n                            </tr>\n                        </table>\n                    </div>\n                </div>",
         "output": "str",
         "x": 1000,
-        "y": 800,
+        "y": 960,
         "wires": [
             [
                 "abb0e0f8.cfa4"
@@ -1430,7 +1434,7 @@
         "template": "// Archive JavaScript\n        function getArchive(hours)\n        { \n            if (hours > 2) messageDialog('Info', 'Wait', 'Getting Archive Data');\n            $('#archive2hrButton').attr(\"disabled\", true); \n            $('#archive4hrButton').attr(\"disabled\", true); \n            $('#archive8hrButton').attr(\"disabled\", true); \n            $('#archive24hrButton').attr(\"disabled\", true); \n            $('#archive72hrButton').attr(\"disabled\", true); \n            $('#archive168hrButton').attr(\"disabled\", true); \n            $('#archive2hrButton').css('color', 'var(--color5)'); \n            $('#archive2hrButton').css('background-color', 'var(--color1)'); \n            $('#archive4hrButton').css('color', 'var(--color5)'); \n            $('#archive4hrButton').css('background-color', 'var(--color1)'); \n            $('#archive8hrButton').css('color', 'var(--color5)'); \n            $('#archive8hrButton').css('background-color', 'var(--color1)'); \n            $('#archive24hrButton').css('color', 'var(--color5)'); \n            $('#archive24hrButton').css('background-color', 'var(--color1)'); \n            $('#archive72hrButton').css('color', 'var(--color5)'); \n            $('#archive72hrButton').css('background-color', 'var(--color1)'); \n            $('#archive168hrButton').css('color', 'var(--color5)'); \n            $('#archive168hrButton').css('background-color', 'var(--color1)'); \n            switch(hours)\n            {\n                case 2:\n                    $('#archive2hrButton').css('color', 'var(--color1)'); \n                    $('#archive2hrButton').css('background-color', 'var(--color5)'); \n                    break;\n                case 4:\n                    $('#archive4hrButton').css('color', 'var(--color1)'); \n                    $('#archive4hrButton').css('background-color', 'var(--color5)'); \n                    break;\n                case 8:\n                    $('#archive8hrButton').css('color', 'var(--color1)'); \n                    $('#archive8hrButton').css('background-color', 'var(--color5)'); \n                    break;\n                case 24:\n                    $('#archive24hrButton').css('color', 'var(--color1)'); \n                    $('#archive24hrButton').css('background-color', 'var(--color5)'); \n                    break;\n                case 72:\n                    $('#archive72hrButton').css('color', 'var(--color1)'); \n                    $('#archive72hrButton').css('background-color', 'var(--color5)'); \n                    break;\n                case 168:\n                    $('#archive168hrButton').css('color', 'var(--color1)'); \n                    $('#archive168hrButton').css('background-color', 'var(--color5)'); \n                    break;\n                default:\n                // code block\n            }\n\n            archiveRequestList = [];\n            archiveList = [];\n            var stopDate = new Date().getTime();\n            var startDate = stopDate - hours * 3600000;\n            archiveRequestList[0] = \n            {\n                deviceType : restfulDevice.deviceType,\n                name : restfulDevice.name, \n                attr : ['ledStateReading','ledStateSetting'],\n                startDate: startDate, \n                stopDate: stopDate,\n            };\n            getArchiveValues();\n        }\n        function getArchiveValues()\n        {\n            sendWebSocketMessageObject(\n                {\n                    topic       : 'getArchive',\n                    userID      : userID,\n                    device      : archiveRequestList[0],\n                 });\n            archiveRequestList.shift();\n            return;\n        }\n        function putArchiveValues(data)\n        {\n            archiveList.push(data);\n            if (archiveRequestList.length > 0)\n            {\n                getArchiveValues();\n            }\n            else\n            {\n                plotArchive();\n            }\n        }\n\n        function plotArchive()\n        {\n            $( \"#messageDialog\" ).dialog( \"close\" );\n            var layout =\n            {\n                showlegend  : true,\n                legend      : { x: 0, y: 1.15},\n                height      : '500',\n                width       : '',\n                xaxis       :\n                {\n                    title: 'Hours since ' + new Date(archiveList[0].device.stopDate).toLocaleString(),\n                },\n                yaxis:\n                {\n                    title           : plotConfig.trace1Title,\n                    titlefont       : {color: plotConfig.trace1Color},\n                    tickfont        : {color:plotConfig.trace1Color},\n                    gridcolor       : plotConfig.trace1GridColor,\n                    zerolinecolor   : plotConfig.trace1GridColor,\n                    linecolor       : plotConfig.trace1GridColor,\n                    range: [0, 2]\n    \n                },\n                yaxis2:\n                {\n                    title           : plotConfig.trace2Title,\n                    titlefont       : {color: plotConfig.trace2Color},\n                    tickfont        : {color:plotConfig.trace2Color},\n                    gridcolor       : plotConfig.trace2GridColor,\n                    zerolinecolor   : plotConfig.trace2GridColor,\n                    linecolor       : plotConfig.trace2GridColor,\n                    overlaying: 'y',\n                    side: 'right',\n                    range: [0, 2]\n                },\n                margin: \n                    {\n                        t: 30, //top margin\n    //                    l: 0, //left margin\n    //                    r: 0, //right margin\n    //                    b: 20 //bottom margin\n                    },\n            };\n            this.trace1 = \n            {\n                x: [],\n                y: [],\n                name: plotConfig.trace1Title,\n                yaxis: 'y1',\n                type: 'scatter',\n                mode: 'lines',\n                line: {color: this.plotConfig.trace1Color}\n        \n            };\n            this.trace2 = \n            {\n                x: [],\n                y: [],\n                name: plotConfig.trace2Title,\n                yaxis: 'y2',\n                type: 'scatter',\n                mode: 'lines',\n                line: {color: this.plotConfig.trace2Color}\n        \n            };\n            for (var ii = 0; ii < archiveList[0].trace.length; ++ii)\n            {\n                var x = (archiveList[0].trace[ii].timeStamp - archiveList[0].device.stopDate) / 3600000.0;\n                trace1.x[ii] = x;\n                trace1.y[ii] = archiveList[0].trace[ii][archiveList[0].device.attr[0]] ;\n                trace2.x[ii] = x;\n                trace2.y[ii] = archiveList[0].trace[ii][archiveList[0].device.attr[1]];\n            }\n\n\n            Plotly.newPlot('archiveChart', [trace1,trace2], layout);\n            $('#archive2hrButton').attr(\"disabled\", false); \n            $('#archive4hrButton').attr(\"disabled\", false); \n            $('#archive8hrButton').attr(\"disabled\", false); \n            $('#archive24hrButton').attr(\"disabled\", false); \n            $('#archive72hrButton').attr(\"disabled\", false); \n            $('#archive168hrButton').attr(\"disabled\", false); \n        }\n",
         "output": "str",
         "x": 670,
-        "y": 920,
+        "y": 1080,
         "wires": [
             [
                 "81b6c690.caa228"
@@ -1449,11 +1453,165 @@
         "template": "<!-- History HTML -->\n                <div class='card'>\n                    <p class='card-title'>Interval Histogram</p>\n                    <div class='card-body' align=\"center\">\n                        <div id=\"intervalHistogramChart\" width=\"100%\" ></div>\n                    </div>\n                </div>\n",
         "output": "str",
         "x": 1000,
-        "y": 880,
+        "y": 1040,
         "wires": [
             [
                 "474a887f.9c76d8"
             ]
         ]
+    },
+    {
+        "id": "8f14813b.bcdfc",
+        "type": "exec",
+        "z": "5f562f66.a301e",
+        "command": "pm2 restart red",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 760,
+        "y": 160,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "ea57f5c0.b55618",
+        "type": "mqtt in",
+        "z": "5f562f66.a301e",
+        "name": "Restart DMA",
+        "topic": "$(RESTARTDMATOPIC)",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "79250bf3.365cc4",
+        "x": 90,
+        "y": 160,
+        "wires": [
+            [
+                "808c8dcc.1f0ac",
+                "a7bfc887.dfe878"
+            ]
+        ]
+    },
+    {
+        "id": "808c8dcc.1f0ac",
+        "type": "json",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 230,
+        "y": 160,
+        "wires": [
+            [
+                "960991fa.0fafe"
+            ]
+        ]
+    },
+    {
+        "id": "960991fa.0fafe",
+        "type": "function",
+        "z": "5f562f66.a301e",
+        "name": "Check Restart Setting",
+        "func": "if (msg.payload != 1) return null\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 520,
+        "y": 160,
+        "wires": [
+            [
+                "8f14813b.bcdfc"
+            ]
+        ]
+    },
+    {
+        "id": "8fd42733.128c98",
+        "type": "function",
+        "z": "5f562f66.a301e",
+        "name": "Filter Websocket MQTT like message",
+        "func": "var msg1 = null;\nvar msg2 = null\nvar mqttArray = msg.topic.split('/');\nif (mqttArray[3] == 'restartDma')\n{\n    msg2 = msg;\n}\nelse\n{\n    msg1 = msg;\n}\n\nreturn [msg1,msg2];",
+        "outputs": 2,
+        "noerr": 0,
+        "x": 230,
+        "y": 100,
+        "wires": [
+            [
+                "7461da25.d86ac4"
+            ],
+            [
+                "960991fa.0fafe"
+            ]
+        ]
+    },
+    {
+        "id": "4bd8d01f.eb1ee",
+        "type": "template",
+        "z": "5f562f66.a301e",
+        "name": "script.dangerZone",
+        "field": "payload.script.dangerZone",
+        "fieldType": "msg",
+        "format": "javascript",
+        "syntax": "mustache",
+        "template": "// dangerZone JavaScript\n        function restartDma()\n        {\n            optionDialog('Danger! Will Robinson, Danger!', 'Restart DMA', 'This should not be done lightly', ['Reset DMA','Cancel'], [function (){restartDmaButtonPress();}, function (){$( \"#optionDialog\" ).dialog( \"close\" );}]);\n        }\n        function restartDmaButtonPress()\n        {\n            $( \"#optionDialog\" ).dialog( \"close\" );\n            var mqttMessage = \n            {\n                topic   : restfulDevice.project + '/' +  restfulDevice.deviceType + '/' +  restfulDevice.name + '/restartDma',\n                payload :  1\n            };\n            checkLogin(sendSettingToMqtt, mqttMessage);\n        }\n",
+        "output": "str",
+        "x": 690,
+        "y": 1160,
+        "wires": [
+            [
+                "ea612d01.18bef"
+            ]
+        ]
+    },
+    {
+        "id": "3efd96de.abb7aa",
+        "type": "template",
+        "z": "5f562f66.a301e",
+        "name": "html.dangerZone",
+        "field": "payload.html.dangerZone",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "                <div class='danger-card'>\n                    <div class='row'>\n                        <div class='col-md-2'>\n                        </div>\n                        <div class='col-md-8'>\n                            <p class='danger-card-title'>Danger Zone</p>\n                         </div>\n                        <div class='col-md-2'>\n                        </div>\n                    </div>\n                    <div class='danger-card-body' align=\"center\">\n                        <div class='row'>\n                            <table width='100%'>\n                                <tr>\n                                    <td width='100%' align=\"center\">\n                                        <button class='btn danger-card-button big-text' id=\"restartDmaButton\" onclick=\"restartDma()\" >Restart DMA</button>\n                                    </td>\n                                </tr>\n                            </table>\n                        </div>\n                    </div>\n                </div>\n",
+        "output": "str",
+        "x": 1010,
+        "y": 1160,
+        "wires": [
+            [
+                "e8fcfdd3.ae407"
+            ]
+        ]
+    },
+    {
+        "id": "a7bfc887.dfe878",
+        "type": "debug",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 360,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "54cc80ce.6f633",
+        "type": "debug",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 580,
+        "y": 100,
+        "wires": []
     }
 ]
