@@ -7,7 +7,7 @@
   "interval": {
     "action": "reading",
     "type": "scalar",
-    "value": 5906,
+    "value": 9025,
     "unit": "unit",
     "alarm": {
       "value": 0,
@@ -27,7 +27,7 @@
   "avgInterval": {
     "action": "reading",
     "type": "scalar",
-    "value": 3072,
+    "value": 9025,
     "unit": "unit",
     "alarm": {
       "value": 0,
@@ -47,7 +47,7 @@
   "cpm": {
     "action": "reading",
     "type": "scalar",
-    "value": 19.5,
+    "value": 6.6,
     "unit": "unit",
     "alarm": {
       "value": 0,
@@ -67,7 +67,7 @@
   "linkQuality": {
     "action": "reading",
     "type": "scalar",
-    "value": 66,
+    "value": 67,
     "unit": "/70",
     "alarm": {
       "value": 0,
@@ -87,7 +87,7 @@
   "signalLevel": {
     "action": "reading",
     "type": "scalar",
-    "value": -44,
+    "value": -43,
     "unit": "dBm",
     "alarm": {
       "value": 0,
