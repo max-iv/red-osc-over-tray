@@ -2,7 +2,7 @@
     {
         "id": "5f562f66.a301e",
         "type": "tab",
-        "label": "device-message-adapter",
+        "label": "blinky-lite-tray",
         "disabled": false,
         "info": ""
     },
@@ -211,7 +211,7 @@
         "bin": "bin",
         "out": "count",
         "addchar": "",
-        "responsetimeout": "10000"
+        "responsetimeout": "60000"
     },
     {
         "id": "79250bf3.365cc4",
@@ -272,7 +272,7 @@
         "qos": "0",
         "retain": "false",
         "broker": "79250bf3.365cc4",
-        "x": 1330,
+        "x": 890,
         "y": 300,
         "wires": []
     },
@@ -282,8 +282,8 @@
         "z": "5f562f66.a301e",
         "name": "Teensy",
         "serial": "21ff842d.62f36c",
-        "x": 1340,
-        "y": 240,
+        "x": 660,
+        "y": 360,
         "wires": []
     },
     {
@@ -340,11 +340,11 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "createSettings",
-        "func": "var device = flow.get('device');\n\nvar buffer = new ArrayBuffer(64);\nvar settingsView = new DataView(buffer);\nsettingsView.setFloat32(0, device.nsamples.value, true);\n\nreturn {topic:'settings',payload:Buffer.from(buffer)};\n",
+        "func": "var device = flow.get('device');\nvar newSetting = flow.get('newSetting');\nif (newSetting == undefined) newSetting = 0;\n//node.warn('newSetting = ' + newSetting.toString());\n\nvar buffer = new ArrayBuffer(64);\nvar settingsView = new DataView(buffer);\nvar temp = 0;\nfor (var ii = 0; ii < 16; ++ii) settingsView.setInt32(ii * 4, temp, true);\nsettingsView.setInt32(0, newSetting, true);\nsettingsView.setFloat32(4, device.nsamples.value, true);\n\nreturn {topic:'settings',payload:Buffer.from(buffer)};\n",
         "outputs": 1,
         "noerr": 0,
-        "x": 1180,
-        "y": 240,
+        "x": 460,
+        "y": 360,
         "wires": [
             [
                 "3f988ea4.7ee392"
@@ -410,30 +410,27 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "Save initSettings in Memory",
-        "func": "flow.set('device', msg.payload);\nvar restfulDevice = \n{\n    deviceType  : msg.payload.deviceType,\n    name        : msg.payload.name\n};\n\nglobal.set('restfulDevice', restfulDevice);\nreturn msg;",
-        "outputs": 1,
+        "func": "flow.set('device', msg.payload);\n\nvar restfulDevice = \n{\n    deviceType  : msg.payload.deviceType,\n    name        : msg.payload.name\n};\n\nglobal.set('restfulDevice', restfulDevice);\nflow.set('newSetting',1);\nreturn null;",
+        "outputs": 0,
         "noerr": 0,
         "x": 780,
         "y": 240,
-        "wires": [
-            [
-                "73924805.ed9568"
-            ]
-        ]
+        "wires": []
     },
     {
         "id": "d5761f6c.c46e6",
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "Parse Reading Byte Array",
-        "func": "var ib;\nvar device = flow.get('device');\nvar dataView     = new DataView(new ArrayBuffer(4));\n\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[0 * 4 + 3 - ib]);\ndevice.interval.value = dataView.getInt32(0);\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[1 * 4 + 3 - ib]);\ndevice.avgInterval.value = Math.round(dataView.getFloat32(0));\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[2 * 4 + 3 - ib]);\ndevice.cpm.value = Math.round(10.0 * dataView.getFloat32(0)) /10.0;\n\ndevice.linkQuality.value     = flow.get('linkQuality');\ndevice.signalLevel.value     = flow.get('signalLevel');\ndevice.bt0RSSI.value         = flow.get('bt0RSSI');\n\nreturn {topic : 'reading', payload : device};\n",
+        "func": "var ib;\nvar device = flow.get('device');\nvar dataView     = new DataView(new ArrayBuffer(4));\nvar newSettingDone = 0;\nvar cubeInit = 0;\n\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[0 * 4 + 3 - ib]);\ncubeInit = dataView.getInt32(0);\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[1 * 4 + 3 - ib]);\nnewSettingDone = dataView.getInt32(0);\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[2 * 4 + 3 - ib]);\ndevice.interval.value = dataView.getInt32(0);\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[3 * 4 + 3 - ib]);\ndevice.avgInterval.value = Math.round(dataView.getFloat32(0));\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[4 * 4 + 3 - ib]);\ndevice.cpm.value = Math.round(10.0 * dataView.getFloat32(0)) /10.0;\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[5 * 4 + 3 - ib]);\nvar nsamples = dataView.getFloat32(0);\n//device.nsamples.value = dataView.getFloat32(0);\n\nif (newSettingDone > 0) \n{\n    flow.set('newSetting', 0);\n    device.nsamples.value = nsamples;\n}\nif(cubeInit == 1) flow.set('newSetting', 1);\n//node.warn('newSettingDone = ' + newSettingDone.toString());\n//node.warn('nsamples = ' + nsamples.toString());\n//node.warn('cubeInit = ' + cubeInit.toString());\n\ndevice.linkQuality.value     = flow.get('linkQuality');\ndevice.signalLevel.value     = flow.get('signalLevel');\ndevice.bt0RSSI.value         = flow.get('bt0RSSI');\n\nreturn {topic : 'reading', payload : device};\n",
         "outputs": 1,
         "noerr": 0,
-        "x": 810,
+        "x": 250,
         "y": 300,
         "wires": [
             [
-                "9115ea87.0ca208"
+                "9115ea87.0ca208",
+                "f3f3f15.081c31"
             ]
         ]
     },
@@ -449,7 +446,7 @@
         "oldrc": false,
         "name": "",
         "x": 280,
-        "y": 560,
+        "y": 640,
         "wires": [
             [
                 "afd71a05.ebd4e8"
@@ -471,7 +468,7 @@
         "once": true,
         "onceDelay": 0.1,
         "x": 120,
-        "y": 560,
+        "y": 640,
         "wires": [
             [
                 "f69c600b.9542",
@@ -488,7 +485,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 460,
-        "y": 560,
+        "y": 640,
         "wires": [
             []
         ]
@@ -505,8 +502,7 @@
         "y": 40,
         "wires": [
             [
-                "5902d0c0.241a6",
-                "f3f3f15.081c31"
+                "5902d0c0.241a6"
             ]
         ]
     },
@@ -515,7 +511,7 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "Settings Alarm Scan",
-        "func": "scalarAlarmScan(msg.payload, 'setting');\nflow.set('device', msg.payload); \n\nreturn msg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
+        "func": "scalarAlarmScan(msg.payload, 'setting');\nflow.set('device', msg.payload); \nflow.set('newSetting',1);\nreturn msg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
         "outputs": 1,
         "noerr": 0,
         "x": 520,
@@ -534,7 +530,7 @@
         "func": "scalarAlarmScan(msg.payload, 'reading');\nflow.set('device', msg.payload); \nvar restfulDevice  = flow.get('restfulDevice');\nmsg.topic = restfulDevice.project + '/' + restfulDevice.deviceType + '/' +restfulDevice.name + '/reading';\nreturn msg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
         "outputs": 1,
         "noerr": 0,
-        "x": 1060,
+        "x": 520,
         "y": 300,
         "wires": [
             [
@@ -555,7 +551,7 @@
         "oldrc": false,
         "name": "",
         "x": 710,
-        "y": 640,
+        "y": 720,
         "wires": [
             [
                 "660483c4.ff812c"
@@ -580,7 +576,7 @@
         "randomUnits": "seconds",
         "drop": false,
         "x": 280,
-        "y": 640,
+        "y": 720,
         "wires": [
             [
                 "ea1c6a21.76e578"
@@ -596,7 +592,7 @@
         "outputs": 0,
         "noerr": 0,
         "x": 410,
-        "y": 380,
+        "y": 460,
         "wires": []
     },
     {
@@ -612,7 +608,7 @@
         "once": true,
         "onceDelay": 0.1,
         "x": 120,
-        "y": 380,
+        "y": 460,
         "wires": [
             [
                 "c3394354.07534"
@@ -628,7 +624,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 480,
-        "y": 640,
+        "y": 720,
         "wires": [
             [
                 "fb6723bd.68db"
@@ -644,32 +640,9 @@
         "outputs": 1,
         "noerr": 0,
         "x": 900,
-        "y": 620,
+        "y": 700,
         "wires": [
             []
-        ]
-    },
-    {
-        "id": "73924805.ed9568",
-        "type": "delay",
-        "z": "5f562f66.a301e",
-        "name": "",
-        "pauseType": "delay",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "x": 1000,
-        "y": 240,
-        "wires": [
-            [
-                "f3f3f15.081c31"
-            ]
         ]
     },
     {
@@ -681,7 +654,7 @@
         "outputs": 0,
         "noerr": 0,
         "x": 470,
-        "y": 440,
+        "y": 520,
         "wires": []
     },
     {
@@ -697,7 +670,7 @@
         "once": true,
         "onceDelay": 0.1,
         "x": 150,
-        "y": 440,
+        "y": 520,
         "wires": [
             [
                 "54125822.397b88"
@@ -717,7 +690,7 @@
         "once": true,
         "onceDelay": 0.1,
         "x": 130,
-        "y": 500,
+        "y": 580,
         "wires": [
             [
                 "c91d065d.8d93a8"
@@ -733,7 +706,7 @@
         "outputs": 0,
         "noerr": 0,
         "x": 390,
-        "y": 500,
+        "y": 580,
         "wires": []
     },
     {
@@ -760,7 +733,7 @@
         "func": "var mqttArray = msg.topic.split('/');\nvar device = \n{\n    project     : mqttArray[0],\n    deviceType  : mqttArray[1],\n    name        : mqttArray[2],\n    prop        : mqttArray[3],\n};\nreturn {topic : msg.topic, payload:{topic:'readings', mqttDevice : device, payload:msg.payload}};",
         "outputs": 1,
         "noerr": 0,
-        "x": 1070,
+        "x": 890,
         "y": 360,
         "wires": [
             [
@@ -775,7 +748,7 @@
         "name": "/websocket",
         "server": "44b51478.9c022c",
         "client": "",
-        "x": 1290,
+        "x": 1110,
         "y": 360,
         "wires": []
     },
@@ -787,7 +760,7 @@
         "links": [
             "756367ed.b63478"
         ],
-        "x": 1135,
+        "x": 975,
         "y": 400,
         "wires": [
             [
@@ -804,7 +777,7 @@
             "6c15c07a.68169"
         ],
         "x": 1235,
-        "y": 740,
+        "y": 820,
         "wires": []
     },
     {
@@ -816,7 +789,7 @@
             "65c2a6ff.a7b8f8"
         ],
         "x": 1235,
-        "y": 780,
+        "y": 860,
         "wires": []
     },
     {
@@ -828,7 +801,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 1050,
-        "y": 820,
+        "y": 900,
         "wires": [
             [
                 "756367ed.b63478"
@@ -842,7 +815,7 @@
         "name": "get Token",
         "tokenconfig": "144aea5f.fcbd96",
         "x": 900,
-        "y": 820,
+        "y": 900,
         "wires": [
             [
                 "cbd524b1.38ae68"
@@ -856,7 +829,7 @@
         "name": "decrypt Token",
         "tokenconfig": "144aea5f.fcbd96",
         "x": 940,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "95ced5d5.49b238"
@@ -872,7 +845,7 @@
         "outputs": 2,
         "noerr": 0,
         "x": 1110,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "e6344b27.343f98"
@@ -891,7 +864,7 @@
         "outputs": 1,
         "noerr": 0,
         "x": 750,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "3779d569.b1256a"
@@ -907,7 +880,7 @@
         "outputs": 2,
         "noerr": 0,
         "x": 730,
-        "y": 800,
+        "y": 880,
         "wires": [
             [
                 "756367ed.b63478"
@@ -940,7 +913,7 @@
         "repair": false,
         "outputs": 2,
         "x": 570,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "d53fb4ef.3c8a98"
@@ -959,7 +932,7 @@
         "action": "",
         "pretty": false,
         "x": 450,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "8f5a7ff7.5fa34"
@@ -974,7 +947,7 @@
         "server": "44b51478.9c022c",
         "client": "",
         "x": 300,
-        "y": 740,
+        "y": 820,
         "wires": [
             [
                 "3161d43f.21043c"
