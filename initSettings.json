@@ -1,5 +1,5 @@
 {
-  "deviceType": "cosmic-interval",
+  "deviceType": "basic",
   "name": "01",
   "arcPeriod": 60000,
   "timeStamp": 1579620007645,
