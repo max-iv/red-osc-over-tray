@@ -1,6 +1,6 @@
 {
   "deviceType": "basic",
-  "name": "01",
+  "name": "02",
   "arcPeriod": 60000,
   "timeStamp": 1584283380359,
   "lastArchive": 1584283329231,
@@ -27,7 +27,7 @@
   "linkQuality": {
     "action": "reading",
     "type": "scalar",
-    "value": 69,
+    "value": 57,
     "unit": "/70",
     "alarm": {
       "value": 0,
@@ -47,27 +47,7 @@
   "signalLevel": {
     "action": "reading",
     "type": "scalar",
-    "value": -41,
-    "unit": "dBm",
-    "alarm": {
-      "value": 0,
-      "limits": {
-        "lolo": -70,
-        "low": -60,
-        "high": 0,
-        "hihi": 30
-      },
-      "notify": {
-        "name": "",
-        "number": "",
-        "time": 0
-      }
-    }
-  },
-  "bt0RSSI": {
-    "action": "reading",
-    "type": "scalar",
-    "value": 0,
+    "value": -53,
     "unit": "dBm",
     "alarm": {
       "value": 0,
@@ -127,7 +107,7 @@
   "loopDelay": {
     "action": "setting",
     "type": "scalar",
-    "value": 1000,
+    "value": 2000,
     "unit": "unit",
     "alarm": {
       "value": 0,
