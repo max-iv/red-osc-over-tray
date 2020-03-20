@@ -592,7 +592,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!-- navBar -->\n    <div class=\"jumbotron\" width=\"100%\">\n        <table width=\"100%\">\n            <tr>\n                <td style=\"text-align:left; vertical-align:middle;\" width=\"20%\">\n                    <a href='/'><img src=\"/img/home.png\" height=\"75px\"/></a>\n                </td>\n                <td width=\"60%\" style=\"text-align:center; vertical-align:middle;\">\n                    <h1 class=\"jumbotron-title big-text bold-text\">{{{payload.title}}}</h1>\n                </td>\n                <td style=\"text-align:right; vertical-align:middle;\"  width=\"20%\">\n                    <a href='https://www.blinky-lite.io/' target='_blank'>\n                        <img src=\"/img/BlinkyLogo.gif\" height=\"75px\"/>\n                    </a>                \n                </td>\n            </tr>\n        </table>\n    </div>\n",
+        "template": "<!-- navBar -->\n    <div class=\"jumbotron\" width=\"100%\">\n        <table width=\"100%\">\n            <tr>\n                <td style=\"text-align:left; vertical-align:middle;\"  width=\"20%\">\n                    <a href='https://www.blinky-lite.io/' target='_blank'>\n                        <img src=\"/img/BlinkyLogo.gif\" height=\"75px\"/>\n                    </a>                \n                </td>\n                <td width=\"60%\" style=\"text-align:center; vertical-align:middle;\">\n                    <h1 class=\"jumbotron-title big-text bold-text\">\n                        <img src=\"/img/{{{payload.navBarIcon}}}\" height=\"75px\" style=\"padding-right:20px;\"/><span>{{{payload.title}}}</span>\n                    </h1>\n                </td>\n                <td style=\"text-align:right; vertical-align:middle;\" width=\"20%\">\n                    <a href='/'><img src=\"/img/home.png\" height=\"75px\"/></a>\n                </td>\n            </tr>\n        </table>\n    </div>\n",
         "output": "str",
         "x": 200,
         "y": 80,
@@ -1182,7 +1182,7 @@
         "y": 240,
         "wires": [
             [
-                "c76a9544.852e88"
+                "6533b535.454c4c"
             ]
         ]
     },
@@ -1197,8 +1197,8 @@
         "syntax": "mustache",
         "template": "Blinky-Lite Basic {{{payload.script.name}}}",
         "output": "str",
-        "x": 500,
-        "y": 240,
+        "x": 240,
+        "y": 320,
         "wires": [
             [
                 "4943dafd.596124"
@@ -1632,7 +1632,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "Blinky-Lite Basic Apps",
+        "template": "Blinky-Lite Basic",
         "output": "str",
         "x": 490,
         "y": 640,
@@ -1670,7 +1670,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "appsYellow.png",
+        "template": "basicYellow.png",
         "output": "str",
         "x": 630,
         "y": 640,
@@ -2172,6 +2172,25 @@
         "wires": [
             [
                 "3bf7d09c.e2495"
+            ]
+        ]
+    },
+    {
+        "id": "6533b535.454c4c",
+        "type": "template",
+        "z": "c4285970.3276d8",
+        "name": "navBarIcon",
+        "field": "payload.navBarIcon",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "basicYellow.png",
+        "output": "str",
+        "x": 250,
+        "y": 280,
+        "wires": [
+            [
+                "c76a9544.852e88"
             ]
         ]
     }
