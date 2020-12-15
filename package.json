@@ -21,6 +21,7 @@
   "homepage": "",
   "dependencies": {
     "node-red": "^1.2.6",
+    "node-red-contrib-gzip": "0.0.3",
     "node-red-dashboard": "^2.25.0",
     "node-red-node-serialport": "^0.11.1"
   }

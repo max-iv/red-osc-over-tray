@@ -7,7 +7,7 @@
         "info": ""
     },
     {
-        "id": "c2a36c27.28ef3",
+        "id": "6fe6f7f3.1de668",
         "type": "tab",
         "label": "Device B",
         "disabled": false,
@@ -296,7 +296,7 @@
         "qos": "0",
         "retain": "false",
         "broker": "79250bf3.365cc4",
-        "x": 1170,
+        "x": 1290,
         "y": 400,
         "wires": []
     },
@@ -366,7 +366,7 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "Readings Alarm Scan",
-        "func": "if (!msg.payload) return null;\nvar device = flow.get('device');\ndevice.linkQuality.value     = global.get('linkQuality');\ndevice.signalLevel.value     = global.get('signalLevel');\nscalarAlarmScan(device, 'reading');\nvar newMsg = \n{\n    topic: flow.get('deviceProps').project + '/' + flow.get('deviceProps').deviceType + '/' + flow.get('deviceProps').name + '/reading',\n    payload: device\n}\nreturn newMsg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
+        "func": "if (!msg.payload) return null;\nvar device = flow.get('device');\ndevice.linkQuality.value     = global.get('linkQuality');\ndevice.signalLevel.value     = global.get('signalLevel');\nscalarAlarmScan(device, 'reading');\nvar newMsg = \n{\n    topic: flow.get('deviceProps').project + '/' + flow.get('deviceProps').deviceType + '/' + flow.get('deviceProps').name + '/reading',\n    payload: JSON.stringify(device)\n}\nreturn newMsg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -389,7 +389,7 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 1180,
+        "x": 1300,
         "y": 460,
         "wires": [
             [
@@ -497,7 +497,7 @@
         "fieldType": "msg",
         "format": "javascript",
         "syntax": "mustache",
-        "template": "// Global Javascript\n        var plotConfig = \n        {\n            trace1Title : 'Led State',\n            trace1Color : '#557a95',\n            trace1GridColor : '#beceda',\n            trace2Title : 'Loop Delay (mS)',\n            trace2Color : '#f2a31f',\n            plotLength  : 600,\n            width   : '',\n            height  :   '500',\n            htmlId  :   'historyStripChart'\n        };\n        var restfulDevice = \n        {\n            deviceType  : '{{{payload.script.deviceType}}}',\n            name        : '{{{payload.script.name}}}',\n            project     : '{{{payload.script.project}}}'\n        };\n        var mqttDevice = null;\n        var device = null;\n        let historyStripChart = new StripChart(plotConfig);\n        var loopDelayChanged = false;\n \n        var archiveRequestList = [];\n        var archiveList = [];\n\n        var pingInterval = 5000;\n        var lastPing = 0;\n\n        useWebSockets(true);\n        function onDocumentReady()\n        {\n            $('#loopDelayButtonId').hide();\n            setInterval(function()\n            {\n                var now = new Date().getTime();\n                if ((now - lastPing) > pingInterval)\n                {\n                    lastPing = now;\n                    var mqttMessage = \n                    {\n                        topic   : restfulDevice.project + '/' +  restfulDevice.deviceType + '/' +  restfulDevice.name + '/ping',\n                        payload :  true\n                    };\n                    sendSettingToMqtt(mqttMessage);\n                }\n            }, 1000);\n        }\n        function onWebSocketOpen()\n        {\n//            getArchive(24);\n        }\n        function onWebSocketClose()\n        {\n            \n        }\n        function onWebSocketMessage(msg)\n        {\n            switch(msg.topic)\n            {\n                case 'readings':\n                    if ((msg.mqttDevice.name == restfulDevice.name) && (msg.mqttDevice.deviceType == restfulDevice.deviceType)  && (msg.mqttDevice.project == restfulDevice.project) )\n                    {\n                        lastPing = new Date().getTime();\n                        heartbeat();\n                        device = msg.payload;\n                        mqttDevice = msg.mqttDevice;\n                        updateDmaReadings();\n                    }\n                    break;\n                case 'getArchiveValues':\n                    if (msg.userID == userID)\n                    {\n                        if ((msg.payload.device.deviceType == restfulDevice.deviceType) && (msg.payload.device.name == restfulDevice.name) )\n                            putArchiveValues(msg.payload);\n                    }\n                    break;\n                default:\n                // code block\n            }\n        }\n        function setScalarValue(settingValue, attrName)\n        {\n            var settingAttr = device[attrName];\n            if ( (settingAttr.alarm.limits.lolo <= settingValue) && (settingValue <= settingAttr.alarm.limits.hihi) )\n            {\n                settingAttr.value = settingValue;\n                var mqttMessage = \n                {\n                    topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                    payload :  device\n                };\n                sendSettingToMqtt(mqttMessage);\n            } \n            else\n            {\n                acknowledgeDialog('Acknowledge', 'Error', 'Entry outside range! (' + settingAttr.alarm.limits.lolo.toString() + '-' + settingAttr.alarm.limits.hihi.toString() + ' ' + settingAttr.unit);\n            }\n        }\n        function loopDelayChange()\n        {\n            loopDelayChanged = true;\n            $('#loopDelayButtonId').show();\n        }\n        function loopDelay()\n        {\n            $('#loopDelayButtonId').hide();\n            if (isNaN($('#loopDelayInputId').val()))\n            {\n                loopDelayChanged = false;\n                return;\n            }\n            setScalarValue(Number($('#loopDelayInputId').val()), 'loopDelay');\n            loopDelayChanged = false;\n        }\n",
+        "template": "// Global Javascript\n        var plotConfig = \n        {\n            trace1Title : 'Led State',\n            trace1Color : '#557a95',\n            trace1GridColor : '#beceda',\n            trace2Title : 'Loop Delay (mS)',\n            trace2Color : '#f2a31f',\n            plotLength  : 600,\n            width   : '',\n            height  :   '500',\n            htmlId  :   'historyStripChart'\n        };\n        var restfulDevice = \n        {\n            deviceType  : '{{{payload.script.deviceType}}}',\n            name        : '{{{payload.script.name}}}',\n            project     : '{{{payload.script.project}}}'\n        };\n        var mqttDevice = null;\n        var device = null;\n        let historyStripChart = new StripChart(plotConfig);\n        var loopDelayChanged = false;\n \n        var archiveRequestList = [];\n        var archiveList = [];\n\n        var pingInterval = 5000;\n        var lastPing = 0;\n\n        useWebSockets(true);\n        function onDocumentReady()\n        {\n            $('#loopDelayButtonId').hide();\n            setInterval(function()\n            {\n                var now = new Date().getTime();\n                if ((now - lastPing) > pingInterval)\n                {\n                    lastPing = now;\n                    var mqttMessage = \n                    {\n                        topic   : restfulDevice.project + '/' +  restfulDevice.deviceType + '/' +  restfulDevice.name + '/ping',\n                        payload :  true\n                    };\n                    sendSettingToMqtt(mqttMessage);\n                }\n            }, 1000);\n        }\n        function onWebSocketOpen()\n        {\n//            getArchive(24);\n        }\n        function onWebSocketClose()\n        {\n            \n        }\n        function onWebSocketMessage(msg)\n        {\n            switch(msg.topic)\n            {\n                case 'test':\n                    var restored = JSON.parse(pako.inflate(msg.payload, { to: 'string' }));\n                    console.log(restored);\n                    break;\n                case 'readings':\n                    if ((msg.mqttDevice.name == restfulDevice.name) && (msg.mqttDevice.deviceType == restfulDevice.deviceType)  && (msg.mqttDevice.project == restfulDevice.project) )\n                    {\n                        lastPing = new Date().getTime();\n                        heartbeat();\n                        device = JSON.parse(pako.inflate(msg.payload, { to: 'string' }));\n                        mqttDevice = msg.mqttDevice;\n                        updateDmaReadings();\n                    }\n                    break;\n                case 'getArchiveValues':\n                    if (msg.userID == userID)\n                    {\n                        if ((msg.payload.device.deviceType == restfulDevice.deviceType) && (msg.payload.device.name == restfulDevice.name) )\n                            putArchiveValues(msg.payload);\n                    }\n                    break;\n                default:\n                // code block\n            }\n        }\n        function setScalarValue(settingValue, attrName)\n        {\n            var settingAttr = device[attrName];\n            if ( (settingAttr.alarm.limits.lolo <= settingValue) && (settingValue <= settingAttr.alarm.limits.hihi) )\n            {\n                settingAttr.value = settingValue;\n                var mqttMessage = \n                {\n                    topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                    payload : pako.deflate(JSON.stringify(device))\n                };\n                sendSettingToMqtt(mqttMessage);\n            } \n            else\n            {\n                acknowledgeDialog('Acknowledge', 'Error', 'Entry outside range! (' + settingAttr.alarm.limits.lolo.toString() + '-' + settingAttr.alarm.limits.hihi.toString() + ' ' + settingAttr.unit);\n            }\n        }\n        function loopDelayChange()\n        {\n            loopDelayChanged = true;\n            $('#loopDelayButtonId').show();\n        }\n        function loopDelay()\n        {\n            $('#loopDelayButtonId').hide();\n            if (isNaN($('#loopDelayInputId').val()))\n            {\n                loopDelayChanged = false;\n                return;\n            }\n            setScalarValue(Number($('#loopDelayInputId').val()), 'loopDelay');\n            loopDelayChanged = false;\n        }\n",
         "output": "str",
         "x": 650,
         "y": 180,
@@ -535,7 +535,7 @@
         "fieldType": "msg",
         "format": "javascript",
         "syntax": "mustache",
-        "template": "// Edit Temp JavaScript\n       $( function() \n        {\n            $( \"#editDeviceDialog\" ).dialog(\n                {\n//                    closeOnEscape: false,\n//                    open: function(event, ui) {$(\".ui-dialog-titlebar-close\", ui.dialog | ui).hide();},\n                    width:    640,\n                    autoOpen: false,\n                    buttons:\n                    [\n                        {\n                            text: \"Set\",\n                            click: function() {setDevice(); $( this ).dialog( \"close\" );},\n                            showText: false\n                        },\n                        {\n                            text: \"Cancel\",\n                            click: function() \n                            {\n                                $( this ).dialog( \"close\" ); \n                            },\n                            showText: false\n                        }\n                    ]\n                });\n        } );\n        function editDevice(attrName)\n        {\n            $( \"#editDeviceDialog\" ).dialog( \"option\", \"title\", \"Edit\"); \n            editedAttribute = attrName;\n            $( \"#editDeviceDialogAttribute\").html(attrName);\n\n            var attr = device[attrName];\n            $( \"#loloAlarm\").val(attr.alarm.limits.lolo);\n            $( \"#lowAlarm\").val(attr.alarm.limits.low);\n            $( \"#highAlarm\").val(attr.alarm.limits.high);\n            $( \"#hihiAlarm\").val(attr.alarm.limits.hihi);\n            $( \"#notifyName\").val(attr.alarm.notify.name);\n            $( \"#notifyNumber\").val(attr.alarm.notify.number);\n\n            $( \"#editDeviceDialog\" ).dialog( \"open\" );\n        }\n        function setDevice()\n        {\n            var attr = device[editedAttribute];\n            if (isNaN($('#loloAlarm').val()) \n                || isNaN($('#lowAlarm').val()) \n                || isNaN($('#highAlarm').val()) \n                || isNaN($('#hihiAlarm').val()))\n            {\n                acknowledgeDialog('Error', 'Entry not a number!', editedAttribute);\n                editedAttribute = '';\n                return;\n            }\n            editedAttribute = '';\n\n            attr.alarm.limits.lolo = Number($( \"#loloAlarm\").val());\n            attr.alarm.limits.low = Number($( \"#lowAlarm\").val());\n            attr.alarm.limits.high = Number($( \"#highAlarm\").val());\n            attr.alarm.limits.hihi = Number($( \"#hihiAlarm\").val());\n            attr.alarm.notify.number =  $( \"#notifyNumber\").val();\n            attr.alarm.notify.name = $( \"#notifyName\").val();\n            var mqttMessage = \n            {\n                topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                payload :  device\n            };\n            sendSettingToMqtt(mqttMessage);\n        }\n",
+        "template": "// Edit Temp JavaScript\n       $( function() \n        {\n            $( \"#editDeviceDialog\" ).dialog(\n                {\n//                    closeOnEscape: false,\n//                    open: function(event, ui) {$(\".ui-dialog-titlebar-close\", ui.dialog | ui).hide();},\n                    width:    640,\n                    autoOpen: false,\n                    buttons:\n                    [\n                        {\n                            text: \"Set\",\n                            click: function() {setDevice(); $( this ).dialog( \"close\" );},\n                            showText: false\n                        },\n                        {\n                            text: \"Cancel\",\n                            click: function() \n                            {\n                                $( this ).dialog( \"close\" ); \n                            },\n                            showText: false\n                        }\n                    ]\n                });\n        } );\n        function editDevice(attrName)\n        {\n            $( \"#editDeviceDialog\" ).dialog( \"option\", \"title\", \"Edit\"); \n            editedAttribute = attrName;\n            $( \"#editDeviceDialogAttribute\").html(attrName);\n\n            var attr = device[attrName];\n            $( \"#loloAlarm\").val(attr.alarm.limits.lolo);\n            $( \"#lowAlarm\").val(attr.alarm.limits.low);\n            $( \"#highAlarm\").val(attr.alarm.limits.high);\n            $( \"#hihiAlarm\").val(attr.alarm.limits.hihi);\n            $( \"#notifyName\").val(attr.alarm.notify.name);\n            $( \"#notifyNumber\").val(attr.alarm.notify.number);\n\n            $( \"#editDeviceDialog\" ).dialog( \"open\" );\n        }\n        function setDevice()\n        {\n            var attr = device[editedAttribute];\n            if (isNaN($('#loloAlarm').val()) \n                || isNaN($('#lowAlarm').val()) \n                || isNaN($('#highAlarm').val()) \n                || isNaN($('#hihiAlarm').val()))\n            {\n                acknowledgeDialog('Error', 'Entry not a number!', editedAttribute);\n                editedAttribute = '';\n                return;\n            }\n            editedAttribute = '';\n\n            attr.alarm.limits.lolo = Number($( \"#loloAlarm\").val());\n            attr.alarm.limits.low = Number($( \"#lowAlarm\").val());\n            attr.alarm.limits.high = Number($( \"#highAlarm\").val());\n            attr.alarm.limits.hihi = Number($( \"#hihiAlarm\").val());\n            attr.alarm.notify.number =  $( \"#notifyNumber\").val();\n            attr.alarm.notify.name = $( \"#notifyName\").val();\n            var mqttMessage = \n            {\n                topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                payload : pako.deflate(JSON.stringify(device))\n            };\n            sendSettingToMqtt(mqttMessage);\n        }\n",
         "output": "str",
         "x": 660,
         "y": 340,
@@ -687,7 +687,7 @@
         "fieldType": "msg",
         "format": "javascript",
         "syntax": "mustache",
-        "template": "        function ledToggle()\n        {\n            if (device.ledToggle.value > 0)\n            {\n                device.ledToggle.value = 0;\n            }\n            else\n            {\n                device.ledToggle.value = 1;\n                \n            }\n            $('#ledToggleButtonId').css('color', 'black'); \n            $('#ledToggleButtonId').css('background-color', 'grey'); \n            $('#ledToggleButtonId').text('?'); \n            var mqttMessage = \n            {\n                topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                payload :  device\n            };\n            sendSettingToMqtt(mqttMessage);\n        }\n        function ledOn()\n        {\n            if (device.ledOn.value > 0)\n            {\n                device.ledOn.value = 0;\n            }\n            else\n            {\n                device.ledOn.value = 1;\n                \n            }\n            $('#ledOnButtonId').css('color', 'black'); \n            $('#ledOnButtonId').css('background-color', 'grey'); \n            $('#ledOnButtonId').text('?'); \n            var mqttMessage = \n            {\n                topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                payload :  device\n            };\n            sendSettingToMqtt(mqttMessage);\n        }\n",
+        "template": "        function ledToggle()\n        {\n            if (device.ledToggle.value > 0)\n            {\n                device.ledToggle.value = 0;\n            }\n            else\n            {\n                device.ledToggle.value = 1;\n                \n            }\n            $('#ledToggleButtonId').css('color', 'black'); \n            $('#ledToggleButtonId').css('background-color', 'grey'); \n            $('#ledToggleButtonId').text('?'); \n            var mqttMessage = \n            {\n                topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                payload : pako.deflate(JSON.stringify(device))\n            };\n            sendSettingToMqtt(mqttMessage);\n        }\n        function ledOn()\n        {\n            if (device.ledOn.value > 0)\n            {\n                device.ledOn.value = 0;\n            }\n            else\n            {\n                device.ledOn.value = 1;\n                \n            }\n            $('#ledOnButtonId').css('color', 'black'); \n            $('#ledOnButtonId').css('background-color', 'grey'); \n            $('#ledOnButtonId').text('?'); \n            var mqttMessage = \n            {\n                topic   : mqttDevice.project + '/' +  mqttDevice.deviceType + '/' +  mqttDevice.name + '/setting',\n                payload : pako.deflate(JSON.stringify(device))\n            };\n            sendSettingToMqtt(mqttMessage);\n        }\n",
         "output": "str",
         "x": 670,
         "y": 260,
@@ -873,7 +873,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "    <meta charset=\"UTF-8\">\n    <link rel=\"icon\" href=\"/img/favicon.ico?v=4\" type=\"image/x-icon\"/>\n    <title>{{payload.title}}</title>\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.css\"/>\n    <link rel=\"stylesheet\" href=\"/jquery/jquery-ui.css\"/>\n    <link rel=\"stylesheet\" href=\"/jquery/jquery-ui-timepicker-addon.css\"/>\n    <script src=\"/jquery/jquery.js\"></script>\n    <script src=\"/jquery/jquery-ui.js\"></script>\n    <script src=\"/jquery/jquery-ui-timepicker-addon.js\"></script>\n    <script src=\"/scripts/plotly-latest.min.js\"></script>\n    <script src=\"/scripts/visDist/vis.js\"></script>\n    <style>\n{{{payload.css}}}\n    </style>\n    <script>\n{{{payload.utilityScripts}}}\n    </script>\n    <script>\n{{{payload.javascript}}}\n    </script>",
+        "template": "    <meta charset=\"UTF-8\">\n    <link rel=\"icon\" href=\"/img/favicon.ico?v=4\" type=\"image/x-icon\"/>\n    <title>{{payload.title}}</title>\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.css\"/>\n    <link rel=\"stylesheet\" href=\"/jquery/jquery-ui.css\"/>\n    <link rel=\"stylesheet\" href=\"/jquery/jquery-ui-timepicker-addon.css\"/>\n    <script src=\"/jquery/jquery.js\"></script>\n    <script src=\"/jquery/jquery-ui.js\"></script>\n    <script src=\"/jquery/jquery-ui-timepicker-addon.js\"></script>\n    <script src=\"/scripts/plotly-latest.min.js\"></script>\n    <script src=\"/scripts/pako.min.js\"></script>\n    <style>\n{{{payload.css}}}\n    </style>\n    <script>\n{{{payload.utilityScripts}}}\n    </script>\n    <script>\n{{{payload.javascript}}}\n    </script>",
         "output": "str",
         "x": 490,
         "y": 40,
@@ -1178,7 +1178,7 @@
         "y": 140,
         "wires": [
             [
-                "d2572e9a.d2ef9"
+                "42c6e9ce.4932e8"
             ],
             [
                 "9115ea87.0ca208"
@@ -1195,7 +1195,7 @@
         "createDir": false,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 1170,
+        "x": 1410,
         "y": 120,
         "wires": [
             []
@@ -1211,7 +1211,7 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 990,
+        "x": 1230,
         "y": 120,
         "wires": [
             [
@@ -1229,7 +1229,7 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 800,
+        "x": 1040,
         "y": 120,
         "wires": [
             [
@@ -1274,8 +1274,7 @@
         "y": 400,
         "wires": [
             [
-                "93049b70.2dc5c8",
-                "a3ff8e5.b79de7"
+                "d976b431.f90598"
             ]
         ]
     },
@@ -1369,7 +1368,7 @@
         "name": "Web socket out",
         "links": [
             "2f289f87.fe2ff",
-            "552b9d69.9699f4"
+            "c7f3b5bf.85c9a8"
         ],
         "x": 315,
         "y": 480,
@@ -1382,7 +1381,7 @@
         "name": "Web socket in",
         "links": [
             "1cdcbcd8.9514e3",
-            "315beec.f3af612"
+            "78ceea9e.d0b204"
         ],
         "x": 675,
         "y": 480,
@@ -1432,41 +1431,84 @@
         "links": [
             "d033193d.436d68"
         ],
-        "x": 1335,
+        "x": 1435,
         "y": 460,
         "wires": []
     },
     {
-        "id": "73389d3c.88d344",
+        "id": "d976b431.f90598",
+        "type": "gzip",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "x": 1090,
+        "y": 400,
+        "wires": [
+            [
+                "93049b70.2dc5c8",
+                "a3ff8e5.b79de7"
+            ]
+        ]
+    },
+    {
+        "id": "42c6e9ce.4932e8",
+        "type": "gzip",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "x": 750,
+        "y": 120,
+        "wires": [
+            [
+                "cd99fe0e.38599"
+            ]
+        ]
+    },
+    {
+        "id": "cd99fe0e.38599",
+        "type": "json",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 870,
+        "y": 120,
+        "wires": [
+            [
+                "d2572e9a.d2ef9"
+            ]
+        ]
+    },
+    {
+        "id": "c42d0817.711ed8",
         "type": "serial in",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "",
         "serial": "3dc818b4.124aa8",
         "x": 90,
         "y": 400,
         "wires": [
             [
-                "32203fa6.b786"
+                "6b08fbdd.aca1c4"
             ]
         ]
     },
     {
-        "id": "ee17557a.46e238",
+        "id": "1d85d064.f6624",
         "type": "mqtt out",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Publish Readings",
         "topic": "",
         "qos": "0",
         "retain": "false",
         "broker": "79250bf3.365cc4",
-        "x": 1170,
+        "x": 1290,
         "y": 400,
         "wires": []
     },
     {
-        "id": "92226e1e.89af7",
+        "id": "70b83752.b04fa8",
         "type": "serial out",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "",
         "serial": "3dc818b4.124aa8",
         "x": 760,
@@ -1474,9 +1516,9 @@
         "wires": []
     },
     {
-        "id": "6a330a2c.a1ebd4",
+        "id": "a1d1cd9a.36668",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "CreateSettings",
         "func": "var device = flow.get('device');\n//node.warn('newSetting = ' + flow.get('newSetting').toString())\n\nvar bufsize = 16;\nvar buffer = new ArrayBuffer(bufsize);\nvar settingsView = new DataView(buffer);\nsettingsView.setInt32(0, flow.get('newSetting'), true);\nsettingsView.setInt32(4, device.ledOn.value, true);\nsettingsView.setInt32(8, device.ledToggle.value, true);\nsettingsView.setInt32(12, device.loopDelay.value, true);\n\nreturn {topic:'settings',payload:Buffer.from(buffer)};\n",
         "outputs": 1,
@@ -1487,14 +1529,14 @@
         "y": 460,
         "wires": [
             [
-                "92226e1e.89af7"
+                "70b83752.b04fa8"
             ]
         ]
     },
     {
-        "id": "8ae796e6.6235e8",
+        "id": "2452a1eb.5214ce",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Save device config in Memory",
         "func": "flow.set('device', msg.payload);\nflow.set('newSetting', 1);\nreturn null;",
         "outputs": 0,
@@ -1506,9 +1548,9 @@
         "wires": []
     },
     {
-        "id": "32203fa6.b786",
+        "id": "6b08fbdd.aca1c4",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Read Serial Handshake",
         "func": "if (flow.get('device') == undefined) return null;\nif (flow.get('newSetting') == undefined) return null;\nvar ib;\nvar device = flow.get('device');\nvar dataView     = new DataView(new ArrayBuffer(4));\nvar newSettingDone = 0;\nvar cubeInit = 0;\n\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[0 * 4 + 3 - ib]);\ncubeInit = dataView.getInt32(0);\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[1 * 4 + 3 - ib]);\nnewSettingDone = dataView.getInt32(0);\n\nvar newMsg = {topic:'userData', payload:[]};\nfor (var ii = 8; ii < msg.payload.length; ++ii) newMsg.payload[ii - 8] = msg.payload[ii];\n\nif (newSettingDone > 0) \n{\n    flow.set('newSetting', 0);\n}\nif(cubeInit == 1) \n{\n    flow.set('newSetting', 1);\n}\n\nreturn newMsg;",
         "outputs": 1,
@@ -1519,17 +1561,17 @@
         "y": 400,
         "wires": [
             [
-                "1763aee9.1696c1",
-                "6a330a2c.a1ebd4"
+                "ae0c8461.89ad58",
+                "a1d1cd9a.36668"
             ]
         ]
     },
     {
-        "id": "cb78a4e7.b32ae8",
+        "id": "4ce7e408.2e4b1c",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Readings Alarm Scan",
-        "func": "if (!msg.payload) return null;\nvar device = flow.get('device');\ndevice.linkQuality.value     = global.get('linkQuality');\ndevice.signalLevel.value     = global.get('signalLevel');\nscalarAlarmScan(device, 'reading');\nvar newMsg = \n{\n    topic: flow.get('deviceProps').project + '/' + flow.get('deviceProps').deviceType + '/' + flow.get('deviceProps').name + '/reading',\n    payload: device\n}\nreturn newMsg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
+        "func": "if (!msg.payload) return null;\nvar device = flow.get('device');\ndevice.linkQuality.value     = global.get('linkQuality');\ndevice.signalLevel.value     = global.get('signalLevel');\nscalarAlarmScan(device, 'reading');\nvar newMsg = \n{\n    topic: flow.get('deviceProps').project + '/' + flow.get('deviceProps').deviceType + '/' + flow.get('deviceProps').name + '/reading',\n    payload: JSON.stringify(device)\n}\nreturn newMsg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1538,32 +1580,32 @@
         "y": 400,
         "wires": [
             [
-                "42b59c3d.d3cf34"
+                "7dfebadc.aad8d4"
             ]
         ]
     },
     {
-        "id": "a80dc6a3.023528",
+        "id": "d270f3eb.6d8eb",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Prepare MQTT topic",
         "func": "var mqttArray = msg.topic.split('/');\nvar device = \n{\n    project     : mqttArray[0],\n    deviceType  : mqttArray[1],\n    name        : mqttArray[2],\n    prop        : mqttArray[3],\n};\nreturn {topic : msg.topic, payload:{topic:'readings', mqttDevice : device, payload:msg.payload}};",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 1180,
+        "x": 1300,
         "y": 460,
         "wires": [
             [
-                "315beec.f3af612"
+                "78ceea9e.d0b204"
             ]
         ]
     },
     {
-        "id": "1763aee9.1696c1",
+        "id": "ae0c8461.89ad58",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Create Readings",
         "func": "var ib;\nvar device = flow.get('device');\nvar dataView     = new DataView(new ArrayBuffer(4));\n\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[0 * 4 + 3 - ib]);\nvar ledState = dataView.getInt32(0);\nvar newSettingDoneMsg = {topic:'newSettingDone', payload:false} \n\nif (ledState != device.ledState.value)\n{\n    device.ledState.value = ledState;\n    newSettingDoneMsg.payload = true;\n}\n\nreturn newSettingDoneMsg;\n",
         "outputs": 1,
@@ -1574,14 +1616,14 @@
         "y": 400,
         "wires": [
             [
-                "cb78a4e7.b32ae8"
+                "4ce7e408.2e4b1c"
             ]
         ]
     },
     {
-        "id": "84bae078.24f43",
+        "id": "939a1de0.390e6",
         "type": "mqtt in",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Subscribe DeviceB",
         "topic": "$(MQTTDEVICEB)",
         "qos": "0",
@@ -1591,14 +1633,14 @@
         "y": 140,
         "wires": [
             [
-                "dbb5e979.853c48"
+                "5e2234b7.98c14c"
             ]
         ]
     },
     {
-        "id": "21c0e565.12037a",
+        "id": "3a12980f.ce2c18",
         "type": "inject",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "deviceB",
         "props": [
             {
@@ -1620,14 +1662,14 @@
         "y": 40,
         "wires": [
             [
-                "cbc64a87.639b58"
+                "ceedf2d6.a1478"
             ]
         ]
     },
     {
-        "id": "24925704.ab6ee8",
+        "id": "6e610f90.655c1",
         "type": "file in",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Read device config",
         "filename": "",
         "format": "utf8",
@@ -1638,14 +1680,14 @@
         "y": 40,
         "wires": [
             [
-                "acc3e953.75ef38"
+                "cbb4b53f.c25c78"
             ]
         ]
     },
     {
-        "id": "acc3e953.75ef38",
+        "id": "cbb4b53f.c25c78",
         "type": "json",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "",
         "property": "payload",
         "action": "",
@@ -1654,14 +1696,14 @@
         "y": 40,
         "wires": [
             [
-                "8ae796e6.6235e8"
+                "2452a1eb.5214ce"
             ]
         ]
     },
     {
-        "id": "cbc64a87.639b58",
+        "id": "ceedf2d6.a1478",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Init flow Variables",
         "func": "var mqttSplit = msg.payload.split('/');\nvar deviceProps = {\n    project     :   mqttSplit[0],\n    deviceType  :   mqttSplit[1],\n    name        :   mqttSplit[2],\n    configFile  :   mqttSplit[1] + '-' + mqttSplit[2] + '.json'\n};\nflow.set('deviceProps',deviceProps);\nflow.set('newSetting',0);\nreturn {topic: 'readFile', 'filename':deviceProps.configFile};",
         "outputs": 1,
@@ -1672,14 +1714,14 @@
         "y": 40,
         "wires": [
             [
-                "24925704.ab6ee8"
+                "6e610f90.655c1"
             ]
         ]
     },
     {
-        "id": "dbb5e979.853c48",
+        "id": "5e2234b7.98c14c",
         "type": "json",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "",
         "property": "payload",
         "action": "",
@@ -1688,14 +1730,14 @@
         "y": 140,
         "wires": [
             [
-                "b51e634b.26731"
+                "75fce7ca.f0d6c8"
             ]
         ]
     },
     {
-        "id": "b51e634b.26731",
+        "id": "75fce7ca.f0d6c8",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Filter MQTT",
         "func": "return {topic:msg.topic.split('/')[3], payload:msg.payload};",
         "outputs": 1,
@@ -1706,14 +1748,14 @@
         "y": 140,
         "wires": [
             [
-                "48a0d24c.ce3d2c"
+                "cce821ce.a0e66"
             ]
         ]
     },
     {
-        "id": "48a0d24c.ce3d2c",
+        "id": "cce821ce.a0e66",
         "type": "switch",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "mqtt topic",
         "property": "topic",
         "propertyType": "msg",
@@ -1736,69 +1778,69 @@
         "y": 140,
         "wires": [
             [
-                "ffd56346.4dea9"
+                "fbb88876.c4c108"
             ],
             [
-                "cb78a4e7.b32ae8"
+                "4ce7e408.2e4b1c"
             ]
         ]
     },
     {
-        "id": "92a100de.acfd2",
+        "id": "19e23f42.d369b1",
         "type": "file",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Init Settings",
         "filename": "",
         "appendNewline": true,
         "createDir": false,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 1170,
+        "x": 1410,
         "y": 120,
         "wires": [
             []
         ]
     },
     {
-        "id": "ce529228.d808a",
+        "id": "e10c7268.2b005",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Make Pretty",
         "func": "var jsonPretty = JSON.stringify(msg.payload,null,2);\nreturn {topic: msg.payload, payload:jsonPretty, 'filename':flow.get('deviceProps').configFile};",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 990,
+        "x": 1230,
         "y": 120,
         "wires": [
             [
-                "92a100de.acfd2"
+                "19e23f42.d369b1"
             ]
         ]
     },
     {
-        "id": "ffd56346.4dea9",
+        "id": "7641051d.e827ec",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Settings Alarm Scan",
         "func": "scalarAlarmScan(msg.payload, 'setting');\nflow.set('device', msg.payload); \nflow.set('newSetting', 1); \nreturn msg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 800,
+        "x": 1040,
         "y": 120,
         "wires": [
             [
-                "ce529228.d808a"
+                "e10c7268.2b005"
             ]
         ]
     },
     {
-        "id": "a3eb9325.3509d",
+        "id": "65abdde6.681674",
         "type": "function",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Filter Websocket",
         "func": "var mqttMessageSplit = msg.payload.mqttMessage.topic.split('/');\nvar deviceProps = flow.get('deviceProps');\nif (mqttMessageSplit[0] != deviceProps.project) return null;\nif (mqttMessageSplit[1] != deviceProps.deviceType) return null;\nif (mqttMessageSplit[2] != deviceProps.name) return null;\nreturn {topic:mqttMessageSplit[3], payload:msg.payload.mqttMessage.payload};",
         "outputs": 1,
@@ -1809,14 +1851,14 @@
         "y": 240,
         "wires": [
             [
-                "48a0d24c.ce3d2c"
+                "cce821ce.a0e66"
             ]
         ]
     },
     {
-        "id": "42b59c3d.d3cf34",
+        "id": "7dfebadc.aad8d4",
         "type": "delay",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Limit 1 Hz",
         "pauseType": "rate",
         "timeout": "5",
@@ -1832,15 +1874,14 @@
         "y": 400,
         "wires": [
             [
-                "ee17557a.46e238",
-                "a80dc6a3.023528"
+                "b8163e61.ca11f"
             ]
         ]
     },
     {
-        "id": "552b9d69.9699f4",
+        "id": "c7f3b5bf.85c9a8",
         "type": "link in",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Device B web socket in",
         "links": [
             "ea909034.6fb25"
@@ -1849,14 +1890,14 @@
         "y": 240,
         "wires": [
             [
-                "23c57a69.931c46"
+                "f0198494.3993f8"
             ]
         ]
     },
     {
-        "id": "23c57a69.931c46",
+        "id": "f0198494.3993f8",
         "type": "json",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "",
         "property": "payload",
         "action": "",
@@ -1865,20 +1906,63 @@
         "y": 240,
         "wires": [
             [
-                "a3eb9325.3509d"
+                "65abdde6.681674"
             ]
         ]
     },
     {
-        "id": "315beec.f3af612",
+        "id": "78ceea9e.d0b204",
         "type": "link out",
-        "z": "c2a36c27.28ef3",
+        "z": "6fe6f7f3.1de668",
         "name": "Device B web socket out",
         "links": [
             "d033193d.436d68"
         ],
-        "x": 1335,
+        "x": 1435,
         "y": 460,
         "wires": []
+    },
+    {
+        "id": "b8163e61.ca11f",
+        "type": "gzip",
+        "z": "6fe6f7f3.1de668",
+        "name": "",
+        "x": 1090,
+        "y": 400,
+        "wires": [
+            [
+                "1d85d064.f6624",
+                "d270f3eb.6d8eb"
+            ]
+        ]
+    },
+    {
+        "id": "fbb88876.c4c108",
+        "type": "gzip",
+        "z": "6fe6f7f3.1de668",
+        "name": "",
+        "x": 750,
+        "y": 120,
+        "wires": [
+            [
+                "8dc8919d.3e443"
+            ]
+        ]
+    },
+    {
+        "id": "8dc8919d.3e443",
+        "type": "json",
+        "z": "6fe6f7f3.1de668",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 870,
+        "y": 120,
+        "wires": [
+            [
+                "7641051d.e827ec"
+            ]
+        ]
     }
 ]
