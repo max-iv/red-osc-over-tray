@@ -1,13 +1,12 @@
-# basic blinky-lite tray
+# basic blinky-basic tray
 ## need to add .env file with the following
-PROJECT=blinky-lite<br/>
-MQTTCLIENTID=basic-tray-01<br/>
-MQTTSERVERIP=broker.shiftr.io<br/>
-MQTTUSERNAME=xxxxxxxx<br/>
-MQTTPASSWORD=xxxxxxxx<br/>
-JWTKEYSECRET=xxxxxxx<br/>
-SETTINGSPASSWORD=xxxxxxxx<br/>
-NODEREDCONFIGSECRET=xxxxxxxxx<br/>
-<br/>
+MQTTDEVICEA=blinky-lite/blinky-basic/01/+  
+MQTTDEVICEB=blinky-lite/blinky-basic/02/+  
+MQTTCLIENTID=blinky-basic-tray-01  
+MQTTSERVERIP=xxxxx.yyyyy.com  
+MQTTUSERNAME=xxx  
+MQTTPASSWORD=yyy  
+NODEREDCONFIGSECRET=zzz  
+
 with no CR after the last line
 
