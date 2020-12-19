@@ -1,4 +1,4 @@
-# basic blinky-basic tray
+# blinky-basic tray
 ## need to add .env file with the following
 MQTTDEVICEA=blinky-lite/blinky-basic/01/+  
 MQTTDEVICEB=blinky-lite/blinky-basic/02/+  
