@@ -2,12 +2,12 @@
   "deviceType": "blinky-basic",
   "name": "01",
   "arcPeriod": 60000,
-  "timeStamp": 1584283380359,
-  "lastArchive": 1584283329231,
+  "timeStamp": 1608482346983,
+  "lastArchive": 1608482305582,
   "ledState": {
     "action": "reading",
     "type": "scalar",
-    "value": 0,
+    "value": 1,
     "unit": "unit",
     "alarm": {
       "value": 0,
@@ -27,7 +27,7 @@
   "linkQuality": {
     "action": "reading",
     "type": "scalar",
-    "value": 52,
+    "value": 56,
     "unit": "/70",
     "alarm": {
       "value": 0,
@@ -47,7 +47,7 @@
   "signalLevel": {
     "action": "reading",
     "type": "scalar",
-    "value": -58,
+    "value": -54,
     "unit": "dBm",
     "alarm": {
       "value": 0,
@@ -67,7 +67,7 @@
   "ledOn": {
     "action": "setting",
     "type": "scalar",
-    "value": 1,
+    "value": 0,
     "unit": "unit",
     "alarm": {
       "value": 0,
