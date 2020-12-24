@@ -7,7 +7,7 @@
   "ledState": {
     "action": "reading",
     "type": "scalar",
-    "value": 1,
+    "value": 0,
     "unit": "unit",
     "alarm": {
       "value": 0,
@@ -27,7 +27,7 @@
   "linkQuality": {
     "action": "reading",
     "type": "scalar",
-    "value": 70,
+    "value": 44,
     "unit": "/70",
     "alarm": {
       "value": 0,
@@ -47,10 +47,10 @@
   "signalLevel": {
     "action": "reading",
     "type": "scalar",
-    "value": -20,
+    "value": -66,
     "unit": "dBm",
     "alarm": {
-      "value": 0,
+      "value": 1,
       "limits": {
         "lolo": -70,
         "low": -60,
