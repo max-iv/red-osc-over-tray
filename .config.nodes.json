@@ -1,7 +1,7 @@
 {
     "node-red": {
         "name": "node-red",
-        "version": "1.2.6-git",
+        "version": "1.2.7-git",
         "local": false,
         "nodes": {
             "inject": {
@@ -360,7 +360,7 @@
     },
     "node-red-dashboard": {
         "name": "node-red-dashboard",
-        "version": "2.25.0",
+        "version": "2.26.2",
         "local": true,
         "nodes": {
             "ui_base": {
