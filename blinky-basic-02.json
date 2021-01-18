@@ -27,7 +27,7 @@
   "linkQuality": {
     "action": "reading",
     "type": "scalar",
-    "value": 55,
+    "value": 51,
     "unit": "/70",
     "alarm": {
       "value": 0,
@@ -47,7 +47,7 @@
   "signalLevel": {
     "action": "reading",
     "type": "scalar",
-    "value": -55,
+    "value": -59,
     "unit": "dBm",
     "alarm": {
       "value": 0,
@@ -107,7 +107,7 @@
   "loopDelay": {
     "action": "setting",
     "type": "scalar",
-    "value": 200,
+    "value": 1000,
     "unit": "unit",
     "alarm": {
       "value": 0,
