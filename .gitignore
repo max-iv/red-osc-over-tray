@@ -16,5 +16,5 @@ node_modules
 .sessions.json
 .config.json
 *.backup
-
+__pycache__
 

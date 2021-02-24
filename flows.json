@@ -7,13 +7,6 @@
         "info": ""
     },
     {
-        "id": "6fe6f7f3.1de668",
-        "type": "tab",
-        "label": "Device B",
-        "disabled": false,
-        "info": ""
-    },
-    {
         "id": "c4285970.3276d8",
         "type": "tab",
         "label": "web-app",
@@ -173,7 +166,7 @@
                     "edited": false
                 },
                 "page-sidebar-backgroundColor": {
-                    "value": "#000000",
+                    "value": "#333333",
                     "edited": false
                 },
                 "group-textColor": {
@@ -203,6 +196,12 @@
                 "base-font": {
                     "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
                 }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey"
             }
         },
         "site": {
@@ -223,65 +222,10 @@
         }
     },
     {
-        "id": "21ff842d.62f36c",
-        "type": "serial-port",
-        "serialport": "/dev/rfcomm0",
-        "serialbaud": "115200",
-        "databits": "8",
-        "parity": "none",
-        "stopbits": "1",
-        "waitfor": "",
-        "newline": "12",
-        "bin": "bin",
-        "out": "count",
-        "addchar": "",
-        "responsetimeout": "1000"
-    },
-    {
-        "id": "79250bf3.365cc4",
-        "type": "mqtt-broker",
-        "name": "MQTT Broker",
-        "broker": "$(MQTTSERVERIP)",
-        "port": "1883",
-        "clientid": "$(MQTTCLIENTID)",
-        "usetls": false,
-        "compatmode": true,
-        "keepalive": "60",
-        "cleansession": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthPayload": "",
-        "closeTopic": "",
-        "closeQos": "0",
-        "closePayload": "",
-        "willTopic": "",
-        "willQos": "0",
-        "willPayload": ""
-    },
-    {
         "id": "44b51478.9c022c",
         "type": "websocket-listener",
         "path": "/blinky-basic/websocket",
         "wholemsg": "false"
-    },
-    {
-        "id": "3dc818b4.124aa8",
-        "type": "serial-port",
-        "serialport": "/dev/rfcomm1",
-        "serialbaud": "115200",
-        "databits": "8",
-        "parity": "none",
-        "stopbits": "1",
-        "waitfor": "",
-        "dtr": "none",
-        "rts": "none",
-        "cts": "none",
-        "dsr": "none",
-        "newline": "12",
-        "bin": "bin",
-        "out": "count",
-        "addchar": "",
-        "responsetimeout": "1000"
     },
     {
         "id": "c427a7cd.35f1f8",
@@ -290,59 +234,22 @@
         "wholemsg": "false"
     },
     {
-        "id": "ea743ee6.d8b55",
-        "type": "serial in",
-        "z": "5f562f66.a301e",
-        "name": "",
-        "serial": "21ff842d.62f36c",
-        "x": 90,
-        "y": 400,
-        "wires": [
-            [
-                "d5761f6c.c46e6"
-            ]
-        ]
+        "id": "7c22f36f.fb7a4c",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
     },
     {
-        "id": "93049b70.2dc5c8",
-        "type": "mqtt out",
-        "z": "5f562f66.a301e",
-        "name": "Publish Readings",
-        "topic": "",
-        "qos": "0",
-        "retain": "false",
-        "broker": "79250bf3.365cc4",
-        "x": 1290,
-        "y": 400,
-        "wires": []
-    },
-    {
-        "id": "3f988ea4.7ee392",
-        "type": "serial out",
-        "z": "5f562f66.a301e",
-        "name": "",
-        "serial": "21ff842d.62f36c",
-        "x": 760,
-        "y": 460,
-        "wires": []
-    },
-    {
-        "id": "f3f3f15.081c31",
-        "type": "function",
-        "z": "5f562f66.a301e",
-        "name": "CreateSettings",
-        "func": "var device = flow.get('device');\n//node.warn('newSetting = ' + flow.get('newSetting').toString())\n\nvar bufsize = 16;\nvar buffer = new ArrayBuffer(bufsize);\nvar settingsView = new DataView(buffer);\nsettingsView.setInt32(0, flow.get('newSetting'), true);\nsettingsView.setInt32(4, device.ledOn.value, true);\nsettingsView.setInt32(8, device.ledToggle.value, true);\nsettingsView.setInt32(12, device.loopDelay.value, true);\n\nreturn {topic:'settings',payload:Buffer.from(buffer)};\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 540,
-        "y": 460,
-        "wires": [
-            [
-                "3f988ea4.7ee392"
-            ]
-        ]
+        "id": "aac9ca27.7c2518",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "7c22f36f.fb7a4c",
+        "order": 1,
+        "disp": true,
+        "width": "12",
+        "collapse": false
     },
     {
         "id": "30f384ea.cf21fc",
@@ -359,25 +266,6 @@
         "wires": [
             [
                 "89892a30.598e28"
-            ]
-        ]
-    },
-    {
-        "id": "d5761f6c.c46e6",
-        "type": "function",
-        "z": "5f562f66.a301e",
-        "name": "Read Serial Handshake",
-        "func": "if (flow.get('device') == undefined) return null;\nif (flow.get('newSetting') == undefined) return null;\nvar ib;\nvar device = flow.get('device');\nvar dataView     = new DataView(new ArrayBuffer(4));\nvar newSettingDone = 0;\nvar cubeInit = 0;\n\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[0 * 4 + 3 - ib]);\ncubeInit = dataView.getInt32(0);\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[1 * 4 + 3 - ib]);\nnewSettingDone = dataView.getInt32(0);\n\nvar newMsg = {topic:'userData', payload:[]};\nfor (var ii = 8; ii < msg.payload.length; ++ii) newMsg.payload[ii - 8] = msg.payload[ii];\n\nif (newSettingDone > 0) \n{\n    flow.set('newSetting', 0);\n}\nif(cubeInit == 1) \n{\n    flow.set('newSetting', 1);\n}\n\nreturn newMsg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 290,
-        "y": 400,
-        "wires": [
-            [
-                "d6a8ff2a.f4acd",
-                "f3f3f15.081c31"
             ]
         ]
     },
@@ -414,24 +302,6 @@
         "wires": [
             [
                 "1cdcbcd8.9514e3"
-            ]
-        ]
-    },
-    {
-        "id": "d6a8ff2a.f4acd",
-        "type": "function",
-        "z": "5f562f66.a301e",
-        "name": "Create Readings",
-        "func": "var ib;\nvar device = flow.get('device');\nvar dataView     = new DataView(new ArrayBuffer(4));\n\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[0 * 4 + 3 - ib]);\nvar ledState = dataView.getInt32(0);\nvar newSettingDoneMsg = {topic:'newSettingDone', payload:false} \n\nif (ledState != device.ledState.value)\n{\n    device.ledState.value = ledState;\n    newSettingDoneMsg.payload = true;\n}\n\nreturn newSettingDoneMsg;\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 550,
-        "y": 400,
-        "wires": [
-            [
-                "9115ea87.0ca208"
             ]
         ]
     },
@@ -542,23 +412,6 @@
         "wires": [
             [
                 "b1885d32.8d9cc"
-            ]
-        ]
-    },
-    {
-        "id": "5023092b.a0fe38",
-        "type": "mqtt in",
-        "z": "5f562f66.a301e",
-        "name": "Subscribe DeviceA",
-        "topic": "$(MQTTDEVICEA)",
-        "qos": "0",
-        "datatype": "auto",
-        "broker": "79250bf3.365cc4",
-        "x": 110,
-        "y": 140,
-        "wires": [
-            [
-                "257906ae.f6991a"
             ]
         ]
     },
@@ -952,7 +805,6 @@
         "y": 400,
         "wires": [
             [
-                "93049b70.2dc5c8",
                 "a3ff8e5.b79de7"
             ]
         ]
@@ -983,462 +835,6 @@
         "wires": [
             [
                 "d2572e9a.d2ef9"
-            ]
-        ]
-    },
-    {
-        "id": "c42d0817.711ed8",
-        "type": "serial in",
-        "z": "6fe6f7f3.1de668",
-        "name": "",
-        "serial": "3dc818b4.124aa8",
-        "x": 90,
-        "y": 400,
-        "wires": [
-            [
-                "6b08fbdd.aca1c4"
-            ]
-        ]
-    },
-    {
-        "id": "1d85d064.f6624",
-        "type": "mqtt out",
-        "z": "6fe6f7f3.1de668",
-        "name": "Publish Readings",
-        "topic": "",
-        "qos": "0",
-        "retain": "false",
-        "broker": "79250bf3.365cc4",
-        "x": 1290,
-        "y": 400,
-        "wires": []
-    },
-    {
-        "id": "70b83752.b04fa8",
-        "type": "serial out",
-        "z": "6fe6f7f3.1de668",
-        "name": "",
-        "serial": "3dc818b4.124aa8",
-        "x": 760,
-        "y": 460,
-        "wires": []
-    },
-    {
-        "id": "a1d1cd9a.36668",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "CreateSettings",
-        "func": "var device = flow.get('device');\n//node.warn('newSetting = ' + flow.get('newSetting').toString())\n\nvar bufsize = 16;\nvar buffer = new ArrayBuffer(bufsize);\nvar settingsView = new DataView(buffer);\nsettingsView.setInt32(0, flow.get('newSetting'), true);\nsettingsView.setInt32(4, device.ledOn.value, true);\nsettingsView.setInt32(8, device.ledToggle.value, true);\nsettingsView.setInt32(12, device.loopDelay.value, true);\n\nreturn {topic:'settings',payload:Buffer.from(buffer)};\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 540,
-        "y": 460,
-        "wires": [
-            [
-                "70b83752.b04fa8"
-            ]
-        ]
-    },
-    {
-        "id": "6b08fbdd.aca1c4",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Read Serial Handshake",
-        "func": "if (flow.get('device') == undefined) return null;\nif (flow.get('newSetting') == undefined) return null;\nvar ib;\nvar device = flow.get('device');\nvar dataView     = new DataView(new ArrayBuffer(4));\nvar newSettingDone = 0;\nvar cubeInit = 0;\n\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[0 * 4 + 3 - ib]);\ncubeInit = dataView.getInt32(0);\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[1 * 4 + 3 - ib]);\nnewSettingDone = dataView.getInt32(0);\n\nvar newMsg = {topic:'userData', payload:[]};\nfor (var ii = 8; ii < msg.payload.length; ++ii) newMsg.payload[ii - 8] = msg.payload[ii];\n\nif (newSettingDone > 0) \n{\n    flow.set('newSetting', 0);\n}\nif(cubeInit == 1) \n{\n    flow.set('newSetting', 1);\n}\n\nreturn newMsg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 290,
-        "y": 400,
-        "wires": [
-            [
-                "ae0c8461.89ad58",
-                "a1d1cd9a.36668"
-            ]
-        ]
-    },
-    {
-        "id": "4ce7e408.2e4b1c",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Readings Alarm Scan",
-        "func": "if (!msg.payload) return null;\nvar device = flow.get('device');\ndevice.linkQuality.value     = global.get('linkQuality');\ndevice.signalLevel.value     = global.get('signalLevel');\nscalarAlarmScan(device, 'reading');\nvar newMsg = \n{\n    topic: flow.get('deviceProps').project + '/' + flow.get('deviceProps').deviceType + '/' + flow.get('deviceProps').name + '/reading',\n    payload: JSON.stringify(device)\n}\nreturn newMsg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 780,
-        "y": 400,
-        "wires": [
-            [
-                "7dfebadc.aad8d4"
-            ]
-        ]
-    },
-    {
-        "id": "d270f3eb.6d8eb",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Prepare MQTT topic",
-        "func": "var mqttArray = msg.topic.split('/');\nvar device = \n{\n    project     : mqttArray[0],\n    deviceType  : mqttArray[1],\n    name        : mqttArray[2],\n    prop        : mqttArray[3],\n};\nreturn {topic : msg.topic, payload:{topic:'readings', mqttDevice : device, payload:msg.payload}};",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 1300,
-        "y": 460,
-        "wires": [
-            [
-                "78ceea9e.d0b204"
-            ]
-        ]
-    },
-    {
-        "id": "ae0c8461.89ad58",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Create Readings",
-        "func": "var ib;\nvar device = flow.get('device');\nvar dataView     = new DataView(new ArrayBuffer(4));\n\nfor (ib = 0; ib < 4; ++ib)   dataView.setUint8(ib, msg.payload[0 * 4 + 3 - ib]);\nvar ledState = dataView.getInt32(0);\nvar newSettingDoneMsg = {topic:'newSettingDone', payload:false} \n\nif (ledState != device.ledState.value)\n{\n    device.ledState.value = ledState;\n    newSettingDoneMsg.payload = true;\n}\n\nreturn newSettingDoneMsg;\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 550,
-        "y": 400,
-        "wires": [
-            [
-                "4ce7e408.2e4b1c"
-            ]
-        ]
-    },
-    {
-        "id": "939a1de0.390e6",
-        "type": "mqtt in",
-        "z": "6fe6f7f3.1de668",
-        "name": "Subscribe DeviceB",
-        "topic": "$(MQTTDEVICEB)",
-        "qos": "0",
-        "datatype": "auto",
-        "broker": "79250bf3.365cc4",
-        "x": 110,
-        "y": 140,
-        "wires": [
-            [
-                "5e2234b7.98c14c"
-            ]
-        ]
-    },
-    {
-        "id": "3a12980f.ce2c18",
-        "type": "inject",
-        "z": "6fe6f7f3.1de668",
-        "name": "deviceB",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "deviceB",
-        "payload": "MQTTDEVICEB",
-        "payloadType": "env",
-        "x": 100,
-        "y": 40,
-        "wires": [
-            [
-                "ceedf2d6.a1478"
-            ]
-        ]
-    },
-    {
-        "id": "6e610f90.655c1",
-        "type": "file in",
-        "z": "6fe6f7f3.1de668",
-        "name": "Read device config",
-        "filename": "",
-        "format": "utf8",
-        "chunk": false,
-        "sendError": false,
-        "encoding": "none",
-        "x": 470,
-        "y": 40,
-        "wires": [
-            [
-                "cbb4b53f.c25c78"
-            ]
-        ]
-    },
-    {
-        "id": "cbb4b53f.c25c78",
-        "type": "json",
-        "z": "6fe6f7f3.1de668",
-        "name": "",
-        "property": "payload",
-        "action": "",
-        "pretty": false,
-        "x": 630,
-        "y": 40,
-        "wires": [
-            [
-                "af83bd0c.71485"
-            ]
-        ]
-    },
-    {
-        "id": "ceedf2d6.a1478",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Init flow Variables",
-        "func": "var mqttSplit = msg.payload.split('/');\nvar deviceProps = {\n    project     :   mqttSplit[0],\n    deviceType  :   mqttSplit[1],\n    name        :   mqttSplit[2],\n    configFile  :   mqttSplit[1] + '-' + mqttSplit[2] + '.json'\n};\nflow.set('deviceProps',deviceProps);\nflow.set('newSetting',0);\nreturn {topic: 'readFile', 'filename':deviceProps.configFile};",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 270,
-        "y": 40,
-        "wires": [
-            [
-                "6e610f90.655c1"
-            ]
-        ]
-    },
-    {
-        "id": "5e2234b7.98c14c",
-        "type": "json",
-        "z": "6fe6f7f3.1de668",
-        "name": "",
-        "property": "payload",
-        "action": "obj",
-        "pretty": false,
-        "x": 270,
-        "y": 140,
-        "wires": [
-            [
-                "75fce7ca.f0d6c8"
-            ]
-        ]
-    },
-    {
-        "id": "75fce7ca.f0d6c8",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Filter MQTT",
-        "func": "return {topic:msg.topic.split('/')[3], payload:msg.payload};",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 410,
-        "y": 140,
-        "wires": [
-            [
-                "cce821ce.a0e66"
-            ]
-        ]
-    },
-    {
-        "id": "cce821ce.a0e66",
-        "type": "switch",
-        "z": "6fe6f7f3.1de668",
-        "name": "mqtt topic",
-        "property": "topic",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "setting",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "ping",
-                "vt": "str"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "x": 600,
-        "y": 140,
-        "wires": [
-            [
-                "fbb88876.c4c108"
-            ],
-            [
-                "4ce7e408.2e4b1c"
-            ]
-        ]
-    },
-    {
-        "id": "19e23f42.d369b1",
-        "type": "file",
-        "z": "6fe6f7f3.1de668",
-        "name": "Init Settings",
-        "filename": "",
-        "appendNewline": true,
-        "createDir": false,
-        "overwriteFile": "true",
-        "encoding": "none",
-        "x": 1410,
-        "y": 120,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "e10c7268.2b005",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Make Pretty",
-        "func": "var jsonPretty = JSON.stringify(msg.payload,null,2);\nreturn {topic: msg.payload, payload:jsonPretty, 'filename':flow.get('deviceProps').configFile};",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 1230,
-        "y": 120,
-        "wires": [
-            [
-                "19e23f42.d369b1"
-            ]
-        ]
-    },
-    {
-        "id": "7641051d.e827ec",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Settings Alarm Scan",
-        "func": "scalarAlarmScan(msg.payload, 'setting');\nflow.set('device', msg.payload); \nflow.set('newSetting', 1); \nreturn msg;\n\nfunction getActionArray(device, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(device);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (device[keys[ii]].hasOwnProperty('type'))\n        {\n            if (device[keys[ii]].type == type)\n            {\n                if (device[keys[ii]].action == actionType)\n                {\n                    actionArray.push(device[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(device, actionType)\n{\n    var actionArray = getActionArray(device, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value < actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value > actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n            }\n        }\n    }\n}\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 1040,
-        "y": 120,
-        "wires": [
-            [
-                "e10c7268.2b005",
-                "bd443a3b.0a6be8"
-            ]
-        ]
-    },
-    {
-        "id": "7dfebadc.aad8d4",
-        "type": "delay",
-        "z": "6fe6f7f3.1de668",
-        "name": "Limit 1 Hz",
-        "pauseType": "rate",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": true,
-        "x": 960,
-        "y": 400,
-        "wires": [
-            [
-                "b8163e61.ca11f"
-            ]
-        ]
-    },
-    {
-        "id": "c7f3b5bf.85c9a8",
-        "type": "link in",
-        "z": "6fe6f7f3.1de668",
-        "name": "Device B web socket in",
-        "links": [
-            "ea909034.6fb25"
-        ],
-        "x": 35,
-        "y": 240,
-        "wires": [
-            [
-                "f0198494.3993f8"
-            ]
-        ]
-    },
-    {
-        "id": "f0198494.3993f8",
-        "type": "json",
-        "z": "6fe6f7f3.1de668",
-        "name": "",
-        "property": "payload",
-        "action": "obj",
-        "pretty": false,
-        "x": 130,
-        "y": 240,
-        "wires": [
-            [
-                "7c714c69.8d9ff4"
-            ]
-        ]
-    },
-    {
-        "id": "78ceea9e.d0b204",
-        "type": "link out",
-        "z": "6fe6f7f3.1de668",
-        "name": "Device B web socket out",
-        "links": [
-            "d033193d.436d68"
-        ],
-        "x": 1435,
-        "y": 460,
-        "wires": []
-    },
-    {
-        "id": "b8163e61.ca11f",
-        "type": "gzip",
-        "z": "6fe6f7f3.1de668",
-        "name": "",
-        "x": 1090,
-        "y": 400,
-        "wires": [
-            [
-                "1d85d064.f6624",
-                "d270f3eb.6d8eb"
-            ]
-        ]
-    },
-    {
-        "id": "fbb88876.c4c108",
-        "type": "gzip",
-        "z": "6fe6f7f3.1de668",
-        "name": "",
-        "x": 750,
-        "y": 120,
-        "wires": [
-            [
-                "8dc8919d.3e443"
-            ]
-        ]
-    },
-    {
-        "id": "8dc8919d.3e443",
-        "type": "json",
-        "z": "6fe6f7f3.1de668",
-        "name": "",
-        "property": "payload",
-        "action": "",
-        "pretty": false,
-        "x": 870,
-        "y": 120,
-        "wires": [
-            [
-                "7641051d.e827ec"
             ]
         ]
     },
@@ -1518,42 +914,6 @@
         "wires": [
             [
                 "da43afe.8d4f85"
-            ]
-        ]
-    },
-    {
-        "id": "1f42c9fb.9b0f16",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Filter Websocket",
-        "func": "var inputDeviceProps = msg.payload.topic.split('/');\nvar deviceProps = flow.get('deviceProps')\nif (inputDeviceProps[0] != deviceProps.project) return null;\nif (inputDeviceProps[1] != deviceProps.deviceType) return null;\nif (inputDeviceProps[2] != deviceProps.name) return null;\nreturn {topic:msg.topic, payload:msg.payload.payload};\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 450,
-        "y": 240,
-        "wires": [
-            [
-                "cce821ce.a0e66"
-            ]
-        ]
-    },
-    {
-        "id": "7c714c69.8d9ff4",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Shift Msg",
-        "func": "return msg.payload;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 270,
-        "y": 240,
-        "wires": [
-            [
-                "1f42c9fb.9b0f16"
             ]
         ]
     },
@@ -2775,118 +2135,6 @@
         ]
     },
     {
-        "id": "af83bd0c.71485",
-        "type": "function",
-        "z": "6fe6f7f3.1de668",
-        "name": "Save device config in Memory",
-        "func": "msg.payload.reset.value = 0;\nflow.set('device', msg.payload);\nflow.set('newSetting', 1);\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 830,
-        "y": 40,
-        "wires": [
-            [
-                "e10c7268.2b005"
-            ]
-        ]
-    },
-    {
-        "id": "409eac3d.a4e7f4",
-        "type": "switch",
-        "z": "6fe6f7f3.1de668",
-        "name": "Reset Tray",
-        "property": "payload.reset.value",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "1",
-                "vt": "num"
-            },
-            {
-                "t": "eq",
-                "v": "2",
-                "vt": "num"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "x": 950,
-        "y": 220,
-        "wires": [
-            [
-                "1f75fde1.b1c092"
-            ],
-            [
-                "5167521d.c6f10c"
-            ]
-        ]
-    },
-    {
-        "id": "1f75fde1.b1c092",
-        "type": "exec",
-        "z": "6fe6f7f3.1de668",
-        "command": "pm2 restart red",
-        "addpay": false,
-        "append": "",
-        "useSpawn": "false",
-        "timer": "",
-        "oldrc": false,
-        "name": "Restart",
-        "x": 1140,
-        "y": 200,
-        "wires": [
-            [],
-            [],
-            []
-        ]
-    },
-    {
-        "id": "5167521d.c6f10c",
-        "type": "exec",
-        "z": "6fe6f7f3.1de668",
-        "command": "sudo reboot",
-        "addpay": false,
-        "append": "",
-        "useSpawn": "false",
-        "timer": "",
-        "oldrc": false,
-        "name": "Reboot",
-        "x": 1140,
-        "y": 260,
-        "wires": [
-            [],
-            [],
-            []
-        ]
-    },
-    {
-        "id": "bd443a3b.0a6be8",
-        "type": "delay",
-        "z": "6fe6f7f3.1de668",
-        "name": "",
-        "pauseType": "delay",
-        "timeout": "2",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "x": 940,
-        "y": 180,
-        "wires": [
-            [
-                "409eac3d.a4e7f4"
-            ]
-        ]
-    },
-    {
         "id": "557e4f40.b904e",
         "type": "delay",
         "z": "5f562f66.a301e",
@@ -3015,6 +2263,233 @@
         "wires": [
             [
                 "f328fcb4.91dc"
+            ]
+        ]
+    },
+    {
+        "id": "d458122a.246d7",
+        "type": "inject",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 660,
+        "wires": [
+            [
+                "efdbccd0.f2f82"
+            ]
+        ]
+    },
+    {
+        "id": "efdbccd0.f2f82",
+        "type": "exec",
+        "z": "5f562f66.a301e",
+        "command": "python3 readRedPitaya.py -td 350",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "true",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 360,
+        "y": 660,
+        "wires": [
+            [
+                "ff779d09.a904a"
+            ],
+            [
+                "5f210d20.75a314"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "5f210d20.75a314",
+        "type": "debug",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 650,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "ff779d09.a904a",
+        "type": "function",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "func": "var trace1 = [];\nvar trace2 = [];\nvar dataView = new DataView(new ArrayBuffer(2));\nvar ndataPts = 512;\nfor (var irow = 0; irow < ndataPts; ++irow)\n{\n    dataView.setUint8(0, msg.payload[irow * 2]);\n    dataView.setUint8(1, msg.payload[irow * 2 + 1]);\n    trace1[irow] = dataView.getInt16(0 , false);\n    dataView.setUint8(0, msg.payload[(irow + ndataPts) * 2]);\n    dataView.setUint8(1, msg.payload[(irow + ndataPts) * 2 + 1]);\n    trace2[irow] = dataView.getInt16(0 , false);\n}\nvar chartData = [\n    {\n        series : [\"Trace 1\", \"Trace 2\"],\n        data   : [[],[]],\n        labels : [\"\"]\n    }\n];\nfor (var irow = 0; irow < ndataPts; ++irow)\n{\n    chartData[0].data[0][irow] = {\"x\":irow,\"y\":trace1[irow]};\n    chartData[0].data[1][irow] = {\"x\":irow,\"y\":trace2[irow]};\n}\nmsg.payload = chartData;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 600,
+        "y": 640,
+        "wires": [
+            [
+                "dae72c23.452bd"
+            ]
+        ]
+    },
+    {
+        "id": "dae72c23.452bd",
+        "type": "ui_chart",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "group": "aac9ca27.7c2518",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "512",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 750,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3e88e0d5.feeb1",
+        "type": "function",
+        "z": "5f562f66.a301e",
+        "name": "Get redPitayaProcess",
+        "func": "var newMsg = {fill: msg.status.fill, pid:msg.status.text}\nflow.set('redPitayaProcess', newMsg);\nreturn null;",
+        "outputs": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 340,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "ebcc94cf.1f16b8",
+        "type": "status",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "scope": [
+            "efdbccd0.f2f82"
+        ],
+        "x": 130,
+        "y": 500,
+        "wires": [
+            [
+                "3e88e0d5.feeb1"
+            ]
+        ]
+    },
+    {
+        "id": "e68a810e.f7863",
+        "type": "function",
+        "z": "5f562f66.a301e",
+        "name": "Kill redPitayaProcess",
+        "func": "var process = flow.get('redPitayaProcess');\nvar newMsg = null;\nif (process.fill != 'blue') return  null;\nif (process.pid != undefined)\n{\n    var pid = Number(process.pid.substring(4));\n    newMsg = {topic:'killProcess',payload:pid}\n}\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 320,
+        "y": 820,
+        "wires": [
+            [
+                "3132ba84.59a1f6"
+            ]
+        ]
+    },
+    {
+        "id": "3132ba84.59a1f6",
+        "type": "exec",
+        "z": "5f562f66.a301e",
+        "command": "kill -9 ",
+        "addpay": true,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 510,
+        "y": 820,
+        "wires": [
+            [],
+            [
+                "5f210d20.75a314"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "57a2edd3.994234",
+        "type": "inject",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 820,
+        "wires": [
+            [
+                "e68a810e.f7863"
             ]
         ]
     }

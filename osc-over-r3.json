@@ -1,5 +1,5 @@
 {
-  "deviceType": "blinky-basic",
+  "deviceType": "blinky-test",
   "name": "01",
   "arcPeriod": 60000,
   "timeStamp": 1610962831200,
