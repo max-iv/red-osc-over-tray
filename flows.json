@@ -205,7 +205,7 @@
             }
         },
         "site": {
-            "name": "Blinky-Lite-Tutorial",
+            "name": "R3 Oscillation Overthruster",
             "hideToolbar": "false",
             "allowSwipe": "false",
             "dateFormat": "DD/MM/YYYY",
@@ -244,11 +244,21 @@
     {
         "id": "aac9ca27.7c2518",
         "type": "ui_group",
-        "name": "Default",
+        "name": "Raw Data",
         "tab": "7c22f36f.fb7a4c",
         "order": 1,
         "disp": true,
-        "width": "12",
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "67d6e9be.8270f8",
+        "type": "ui_group",
+        "name": "Bunch Data",
+        "tab": "7c22f36f.fb7a4c",
+        "order": 2,
+        "disp": true,
+        "width": "6",
         "collapse": false
     },
     {
@@ -256,7 +266,7 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "Save device config in Memory",
-        "func": "msg.payload.reset.value = 0;\nflow.set('device', msg.payload);\nflow.set('newSetting', 1);\nreturn msg;",
+        "func": "msg.payload.reset.value = 0;\nvar device = msg.payload;\nflow.set('device', device);\nflow.set('newSetting', 1);\nfor (var ibunch = 0; ibunch < 176; ++ibunch) \n{\n    device.bunchCurrent.value[0][ibunch] = ibunch;\n    device.bunchCurrent.value[1][ibunch] = 0.0;\n    device.phase.value[0][ibunch] = ibunch;\n    device.phase.value[1][ibunch] = 0.0;\n    device.difPhase.value[0][ibunch] = ibunch;\n    device.difPhase.value[1][ibunch] = 0.0;\n}\nfor (var imode = 0; imode < 88; ++imode)\n{\n    device.modeM.value[0][imode] = imode;\n    device.modeM.value[1][imode] = 0.0;\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -265,7 +275,8 @@
         "y": 40,
         "wires": [
             [
-                "89892a30.598e28"
+                "89892a30.598e28",
+                "c7bd6706.673068"
             ]
         ]
     },
@@ -612,7 +623,8 @@
         "wires": [
             [
                 "89892a30.598e28",
-                "557e4f40.b904e"
+                "557e4f40.b904e",
+                "c7bd6706.673068"
             ]
         ]
     },
@@ -2267,105 +2279,41 @@
         ]
     },
     {
-        "id": "d458122a.246d7",
-        "type": "inject",
-        "z": "5f562f66.a301e",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 140,
-        "y": 660,
-        "wires": [
-            [
-                "efdbccd0.f2f82"
-            ]
-        ]
-    },
-    {
         "id": "efdbccd0.f2f82",
         "type": "exec",
         "z": "5f562f66.a301e",
-        "command": "python3 readRedPitaya.py -td 350",
-        "addpay": false,
+        "command": "python3 readRedPitaya.py ",
+        "addpay": true,
         "append": "",
         "useSpawn": "true",
         "timer": "",
         "oldrc": false,
         "name": "",
         "x": 360,
-        "y": 660,
-        "wires": [
-            [
-                "ff779d09.a904a"
-            ],
-            [
-                "5f210d20.75a314"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "5f210d20.75a314",
-        "type": "debug",
-        "z": "5f562f66.a301e",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 650,
-        "y": 700,
-        "wires": []
-    },
-    {
-        "id": "ff779d09.a904a",
-        "type": "function",
-        "z": "5f562f66.a301e",
-        "name": "",
-        "func": "var trace1 = [];\nvar trace2 = [];\nvar dataView = new DataView(new ArrayBuffer(2));\nvar ndataPts = 512;\nfor (var irow = 0; irow < ndataPts; ++irow)\n{\n    dataView.setUint8(0, msg.payload[irow * 2]);\n    dataView.setUint8(1, msg.payload[irow * 2 + 1]);\n    trace1[irow] = dataView.getInt16(0 , false);\n    dataView.setUint8(0, msg.payload[(irow + ndataPts) * 2]);\n    dataView.setUint8(1, msg.payload[(irow + ndataPts) * 2 + 1]);\n    trace2[irow] = dataView.getInt16(0 , false);\n}\nvar chartData = [\n    {\n        series : [\"Trace 1\", \"Trace 2\"],\n        data   : [[],[]],\n        labels : [\"\"]\n    }\n];\nfor (var irow = 0; irow < ndataPts; ++irow)\n{\n    chartData[0].data[0][irow] = {\"x\":irow,\"y\":trace1[irow]};\n    chartData[0].data[1][irow] = {\"x\":irow,\"y\":trace2[irow]};\n}\nmsg.payload = chartData;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 600,
         "y": 640,
         "wires": [
             [
-                "dae72c23.452bd"
-            ]
+                "24005dd1.2fdb82"
+            ],
+            [
+                "f7f2ce33.f776d"
+            ],
+            []
         ]
     },
     {
         "id": "dae72c23.452bd",
         "type": "ui_chart",
         "z": "5f562f66.a301e",
-        "name": "",
+        "name": "RawDataChart",
         "group": "aac9ca27.7c2518",
         "order": 0,
         "width": 0,
         "height": 0,
-        "label": "chart",
+        "label": "Raw Data",
         "chartType": "line",
         "legend": "false",
-        "xformat": "",
+        "xformat": "x",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
@@ -2389,8 +2337,8 @@
             "#c5b0d5"
         ],
         "outputs": 1,
-        "x": 750,
-        "y": 640,
+        "x": 1060,
+        "y": 620,
         "wires": [
             []
         ]
@@ -2405,8 +2353,8 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 340,
-        "y": 500,
+        "x": 300,
+        "y": 420,
         "wires": []
     },
     {
@@ -2417,8 +2365,8 @@
         "scope": [
             "efdbccd0.f2f82"
         ],
-        "x": 130,
-        "y": 500,
+        "x": 90,
+        "y": 420,
         "wires": [
             [
                 "3e88e0d5.feeb1"
@@ -2435,8 +2383,8 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 320,
-        "y": 820,
+        "x": 360,
+        "y": 480,
         "wires": [
             [
                 "3132ba84.59a1f6"
@@ -2454,43 +2402,338 @@
         "timer": "",
         "oldrc": false,
         "name": "",
-        "x": 510,
-        "y": 820,
+        "x": 550,
+        "y": 480,
         "wires": [
             [],
             [
-                "5f210d20.75a314"
+                "f7f2ce33.f776d"
             ],
             []
         ]
     },
     {
-        "id": "57a2edd3.994234",
-        "type": "inject",
+        "id": "c7bd6706.673068",
+        "type": "link out",
         "z": "5f562f66.a301e",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
+        "name": "New Settings",
+        "links": [
+            "722a0b67.455f54"
         ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
+        "x": 1175,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "c7ca0f50.b2104",
+        "type": "function",
+        "z": "5f562f66.a301e",
+        "name": "Set TrigDelay",
+        "func": "msg.payload = \" -td 254\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
         "x": 140,
-        "y": 820,
+        "y": 640,
         "wires": [
             [
-                "e68a810e.f7863"
+                "efdbccd0.f2f82"
             ]
+        ]
+    },
+    {
+        "id": "722a0b67.455f54",
+        "type": "link in",
+        "z": "5f562f66.a301e",
+        "name": "restart Scope",
+        "links": [
+            "c7bd6706.673068"
+        ],
+        "x": 35,
+        "y": 540,
+        "wires": [
+            [
+                "57ce7ea6.d99c2"
+            ]
+        ]
+    },
+    {
+        "id": "57ce7ea6.d99c2",
+        "type": "delay",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 150,
+        "y": 540,
+        "wires": [
+            [
+                "e68a810e.f7863",
+                "8bff3d62.56b96"
+            ]
+        ]
+    },
+    {
+        "id": "8bff3d62.56b96",
+        "type": "delay",
+        "z": "5f562f66.a301e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 340,
+        "y": 540,
+        "wires": [
+            [
+                "c7ca0f50.b2104"
+            ]
+        ]
+    },
+    {
+        "id": "24005dd1.2fdb82",
+        "type": "function",
+        "z": "5f562f66.a301e",
+        "name": "Read Traces",
+        "func": "var trace1 = [];\nvar trace2 = [];\nvar dataView = new DataView(new ArrayBuffer(2));\nvar ndataPts = 512;\nfor (var irow = 0; irow < ndataPts; ++irow)\n{\n    dataView.setUint8(0, msg.payload[irow * 2]);\n    dataView.setUint8(1, msg.payload[irow * 2 + 1]);\n    trace1[irow] = dataView.getInt16(0 , false);\n    dataView.setUint8(0, msg.payload[(irow + ndataPts) * 2]);\n    dataView.setUint8(1, msg.payload[(irow + ndataPts) * 2 + 1]);\n    trace2[irow] = dataView.getInt16(0 , false);\n}\nreturn {topic : \"traceData\",payload:{'trace1' : trace1, 'trace2' : trace2}};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 610,
+        "y": 640,
+        "wires": [
+            [
+                "849349df.b2d698"
+            ]
+        ]
+    },
+    {
+        "id": "f7f2ce33.f776d",
+        "type": "function",
+        "z": "5f562f66.a301e",
+        "name": "Red Pitaya Err",
+        "func": "node.warn(msg.payload);\nreturn msg;",
+        "outputs": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 720,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "849349df.b2d698",
+        "type": "function",
+        "z": "5f562f66.a301e",
+        "name": "Process Data",
+        "func": "var device = flow.get('device');\nif (msg.payload.trace1.length != 512)\n{   node.warn(\"Pitaya scope trace not 512 pts\");\n    return null;\n}\nvar trace1OffsetDaq = 0.000;\nvar trace2OffsetDaq = 0.000;\nvar mixer6OrderCal100mV = 0.0;\nvar bunchCurrentTo100mV = 0.710;\nvar dac100mV = 655.36\nvar frf = 99.5;\nvar fsample = 250.0;\nvar bunchStart = 11;\nvar bunchStop = 164;\n\nvar radToDegrees = 180.0 / Math.PI;\nvar twoPi = 2.0 * Math.PI;\n\nvar traceICal = [];\nvar traceQCal = [];\n\nvar tr1Avg =  msg.payload.trace1[0];\nvar tr2Avg =  msg.payload.trace2[0];\n\nfor (var ii = 0; ii < 511; ++ii) \n{\n    tr1Avg = tr1Avg + (msg.payload.trace1[ii + 1] - tr1Avg) * frf / fsample;\n    msg.payload.trace1[ii + 1] = tr1Avg;\n    tr2Avg = tr2Avg + (msg.payload.trace2[ii + 1] - tr2Avg) * frf / fsample;\n    msg.payload.trace2[ii + 1] = tr2Avg;\n}\n\nfor (var ii = 0; ii < 512; ++ii) \n{\n    var trI = (msg.payload.trace1[ii] - trace1OffsetDaq) / dac100mV;\n    var sign = 1.0;\n    if (trI < 0)\n    {\n        sign = -1.0;\n        trI = -trI;\n    }\n    traceICal[ii] = sign * (trI + mixer6OrderCal100mV * trI * trI * trI * trI * trI * trI);\n// 6dB splitter in front of Q channel\n    var trQ = 2.0 * (msg.payload.trace2[ii] - trace2OffsetDaq) / dac100mV;\n    sign = 1.0;\n    if (trQ < 0)\n    {\n        sign = -1.0;\n        trQ = -trQ;\n    }\n    traceQCal[ii] = sign * (trQ + mixer6OrderCal100mV * trQ * trQ * trQ * trQ * trQ * trQ);\n}\nvar bunchI;\nvar bunchQ;\ndevice.beamCurrent.value = 0.0;\nfor (var ibunch = 0; ibunch < 176; ++ibunch) \n{\n    var isampleStart = Math.round((ibunch + 0.0) * fsample / frf);\n    var isampleStop  = Math.round((ibunch + 1.0) * fsample / frf);\n    bunchI = 0.0;\n    bunchQ = 0.0;\n    var nsamples = 0.0;\n    for (var isample = isampleStart; isample <= isampleStop; ++isample)\n    {\n        bunchI = bunchI + traceICal[isample];\n        bunchQ = bunchQ + traceQCal[isample];\n        nsamples = nsamples + 1.0;\n    }\n    bunchI = bunchI / nsamples;\n    bunchQ = bunchQ / nsamples;\n    device.bunchCurrent.value[0][ibunch] = ibunch;\n    device.bunchCurrent.value[1][ibunch] = bunchCurrentTo100mV * Math.sqrt(bunchI * bunchI + bunchQ * bunchQ);\n    device.beamCurrent.value = device.beamCurrent.value + device.bunchCurrent.value[1][ibunch];\n\n    device.phase.value[0][ibunch]  = ibunch;\n    device.phase.value[1][ibunch]  = 0.0;\n    if ((bunchStart <= ibunch) && (ibunch <= bunchStop))\n    {\n        device.phase.value[1][ibunch] = radToDegrees *  Math.atan2(bunchQ, bunchI);\n    }\n}\nvar phaseHistory = context.get('phaseHistory');\nif (phaseHistory == undefined)\n{\n    phaseHistory = [];\n    for (var ibunch = 0; ibunch < 176; ++ibunch)\n    {\n        phaseHistory[ibunch] = [];\n        for (var ihistory = 0; ihistory < 20; ++ihistory)\n        {\n            phaseHistory[ibunch][ihistory] = device.phase.value[1][ibunch];\n        }\n    }\n}\nvar maxRmsPhase = 0.0;\nvar ihistoryMax = 0;\nfor (var ihistory = 0; ihistory < device.modeLookback.value; ++ihistory)\n{\n    var rmsPhase = 0.0;\n    for (var ibunch = bunchStart; ibunch <= bunchStop; ++ibunch)\n    {\n        var phaseChange = device.phase.value[1][ibunch] - phaseHistory[ibunch][ihistory];\n        rmsPhase = rmsPhase + phaseChange * phaseChange;\n    }\n    if (rmsPhase > maxRmsPhase)\n    {\n        maxRmsPhase = rmsPhase;\n        ihistoryMax = ihistory;\n    }\n}\nfor (var ibunch = 0; ibunch < 176; ++ibunch)\n{\n    device.difPhase.value[1][ibunch] = device.phase.value[1][ibunch] - phaseHistory[ibunch][ihistoryMax];\n    phaseHistory[ibunch].pop();\n    phaseHistory[ibunch].unshift(device.phase.value[1][ibunch]);\n}\ncontext.set('phaseHistory',phaseHistory);\n\nvar nbunches = bunchStop - bunchStart + 1.0;\nfor (var imode = 0; imode < 88; ++imode)\n{\n    device.modeM.value[0][imode] = imode;\n    var modeI = 0.0;\n    var modeQ = 0.0;\n    for (var ibunch = bunchStart; ibunch <= bunchStop; ++ibunch)\n    {\n        modeI = modeI + Math.cos(twoPi * imode  * ibunch / 176.0 ) * device.difPhase.value[1][ibunch];\n        modeQ = modeQ + Math.sin(twoPi * imode  * ibunch / 176.0 ) * device.difPhase.value[1][ibunch];\n    }\n    modeI = modeI / nbunches;\n    modeQ = modeQ / nbunches;\n    var modeAmp = Math.sqrt(modeI * modeI + modeQ * modeQ);\n    device.modeM.value[1][imode] = device.modeM.value[1][imode] + (modeAmp - device.modeM.value[1][imode]) / device.modeLookback.value;\n    device.modeM.value[1][imode] = Math.round(device.modeM.value[1][imode] * 1000) / 1000;\n}\nfor (var ibunch = 0; ibunch < 176; ++ibunch) \n{\n    device.bunchCurrent.value[1][ibunch] = Math.round(device.bunchCurrent.value[1][ibunch] * 1000) / 1000;\n    device.phase.value[1][ibunch] = Math.round(device.phase.value[1][ibunch] * 1000) / 1000;;\n    device.difPhase.value[1][ibunch] = Math.round(device.difPhase.value[1][ibunch] * 1000) / 1000;;\n}\ndevice.beamCurrent.value = Math.round(device.beamCurrent.value * 1000) / 1000;\nprocessCompleteMsg = {topic: \"processComplete\", payload:true};\n\nvar rawTraceDataChart = [\n    {\n        series : [\"Trace 1\", \"Trace 2\"],\n        data   : [[],[]],\n        labels : [\"\"]\n    }\n];\nfor (var irow = 0; irow < msg.payload.trace1.length; ++irow)\n{\n    rawTraceDataChart[0].data[0][irow] = {\"x\":irow,\"y\":msg.payload.trace1[irow]};\n    rawTraceDataChart[0].data[1][irow] = {\"x\":irow,\"y\":msg.payload.trace2[irow]};\n}\nrawTraceDataMsg = {topic:'rawTraceDataMsg',payload: rawTraceDataChart};\n\nvar bunchCurrentChart = [\n    {\n        series : [\"Bunch Current\"],\n        data   : [[]],\n        labels : [\"\"]\n    }\n];\nfor (var ibunch = 0; ibunch < 176; ++ibunch) \n{\n    bunchCurrentChart[0].data[0][ibunch] = {\"x\":ibunch,\"y\":device.bunchCurrent.value[1][ibunch]};\n}\nbunchCurrentChartMsg = {topic:'bunchCurrentChartMsg',payload: bunchCurrentChart};\n\nvar bunchPhaseChart = [\n    {\n        series : [\"Bunch Phase\"],\n        data   : [[]],\n        labels : [\"\"]\n    }\n];\nfor (var ibunch = 0; ibunch < 176; ++ibunch) \n{\n    bunchPhaseChart[0].data[0][ibunch] = {\"x\":ibunch,\"y\":device.phase.value[1][ibunch]};\n}\nbunchPhaseChartMsg = {topic:'bunchPhaseChartMsg',payload: bunchPhaseChart};\n\nvar diffPhaseChart = [\n    {\n        series : [\"Differential Phase\"],\n        data   : [[]],\n        labels : [\"\"]\n    }\n];\nfor (var ibunch = 0; ibunch < 176; ++ibunch) \n{\n    diffPhaseChart[0].data[0][ibunch] = {\"x\":ibunch,\"y\":device.difPhase.value[1][ibunch]};\n}\ndiffPhaseChartMsg = {topic:'diffPhaseChartMsg', payload: diffPhaseChart};\n\nvar modeChart = [\n    {\n        series : [\"Mode Spectrum\"],\n        data   : [[]],\n        labels : [\"\"]\n    }\n];\nfor (var imode = 0; imode < 88; ++imode) \n{\n    modeChart[0].data[0][imode] = {\"x\":imode,\"y\":device.modeM.value[1][imode]};\n}\nmodeChartMsg = {topic:'modeChartMsg', payload: modeChart};\n\nreturn [processCompleteMsg, rawTraceDataMsg, bunchCurrentChartMsg, bunchPhaseChartMsg, diffPhaseChartMsg,modeChartMsg]\n",
+        "outputs": 6,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 780,
+        "y": 640,
+        "wires": [
+            [],
+            [
+                "dae72c23.452bd"
+            ],
+            [
+                "85b7adf3.4cecf"
+            ],
+            [
+                "97274c6f.ad1a1"
+            ],
+            [
+                "c78759e8.0e1988"
+            ],
+            [
+                "c82b4aab.f328b8"
+            ]
+        ]
+    },
+    {
+        "id": "85b7adf3.4cecf",
+        "type": "ui_chart",
+        "z": "5f562f66.a301e",
+        "name": "BunchCurrentChart",
+        "group": "67d6e9be.8270f8",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Bunch Current",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "x",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "2",
+        "removeOlder": 1,
+        "removeOlderPoints": "176",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 1070,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "97274c6f.ad1a1",
+        "type": "ui_chart",
+        "z": "5f562f66.a301e",
+        "name": "BunchPhaseChart",
+        "group": "67d6e9be.8270f8",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Bunch Phase",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "x",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "-20",
+        "ymax": "20",
+        "removeOlder": 1,
+        "removeOlderPoints": "176",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 1070,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c78759e8.0e1988",
+        "type": "ui_chart",
+        "z": "5f562f66.a301e",
+        "name": "DiffPhaseChart",
+        "group": "67d6e9be.8270f8",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Differential Phase",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "x",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "-20",
+        "ymax": "20",
+        "removeOlder": 1,
+        "removeOlderPoints": "176",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 1060,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c82b4aab.f328b8",
+        "type": "ui_chart",
+        "z": "5f562f66.a301e",
+        "name": "ModeChart",
+        "group": "aac9ca27.7c2518",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Mode Data",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "x",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "10",
+        "removeOlder": 1,
+        "removeOlderPoints": "88",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 1050,
+        "y": 780,
+        "wires": [
+            []
         ]
     }
 ]
