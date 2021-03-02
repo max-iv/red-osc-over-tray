@@ -3,6 +3,7 @@ import sys
 import argparse
 import time
 import socket
+import random
 
 class scpi (object):
     """SCPI class used to access Red Pitaya over an IP network."""
@@ -85,6 +86,7 @@ def readByteArray():
 
 parser = argparse.ArgumentParser(description='Setup Red Pitaya')
 parser.add_argument('-td', '--trigDelay', type=int, default=1, help='trigger delay samples (default is 1)')
+parser.add_argument('-ld', '--loopDelay', type=float, default=0.2, help='loop delay (default is 0.2)')
 args = parser.parse_args()
 
 rp_s = scpi("192.168.10.11")
@@ -102,6 +104,7 @@ rp_s.tx_txt('ACQ:SOUR1:COUP DC')
 rp_s.tx_txt('ACQ:SOUR2:COUP DC')
 
 while 1:
+    start = time.time()
     rp_s.tx_txt('ACQ:START')
     rp_s.tx_txt('ACQ:TRIG EXT_PE')
 
@@ -116,4 +119,9 @@ while 1:
     rp_s.tx_txt('ACQ:SOUR2:DATA:OLD:N? 512')
     buf2 = b''.join(readByteArray())
     bufTotal = b''.join([buf1,buf2])
+    end = time.time();
+    while (end - start) < (args.loopDelay + random.uniform(-0.001, 0.001)):
+        end = time.time()
     sys.stdout.buffer.write(bufTotal)
+#    print (end - start)
+
