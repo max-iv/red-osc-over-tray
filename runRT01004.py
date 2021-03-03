@@ -5,15 +5,15 @@ import random
 import sys
 import struct
 
-timePos = -95
+timePos = 250
 timeRef = 10
 loopDelay = 0.5
-rfFreq = 100.0
+rfFreq = 99.5
 sampleRate = 1000.0
 iTraceOffset = 0.000;
 qTraceOffset = 0.000;
 mixer6OrderCal100mV = 0.0078125
-bunchCurrentTo100mV = 0.648
+bunchCurrentTo100mV = 0.638
 
 rm = visa.ResourceManager('@py')
 rp = rm.open_resource('TCPIP::{}::{}::SOCKET'.format('192.168.10.10', 5025), read_termination = '\n')
