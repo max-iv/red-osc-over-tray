@@ -84,6 +84,86 @@
       }
     }
   },
+  "maxDipoleMode": {
+    "action": "reading",
+    "type": "scalar",
+    "value": 0,
+    "unit": "unit",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -1,
+        "low": -1,
+        "high": 89,
+        "hihi": 89
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "avgPhase": {
+    "action": "reading",
+    "type": "scalar",
+    "value": -736.66,
+    "unit": "deg",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -70,
+        "low": -50,
+        "high": 50,
+        "hihi": 70
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "maxDipoleModeAmp": {
+    "action": "reading",
+    "type": "scalar",
+    "value": 4.79,
+    "unit": "deg",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -1,
+        "low": -1,
+        "high": 4,
+        "hihi": 20
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "rmsModeAmp": {
+    "action": "reading",
+    "type": "scalar",
+    "value": 9.79,
+    "unit": "deg",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -1,
+        "low": -1,
+        "high": 4,
+        "hihi": 4
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
   "modeM": {
     "action": "reading",
     "type": "vector",
