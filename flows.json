@@ -242,16 +242,6 @@
         "hidden": false
     },
     {
-        "id": "aac9ca27.7c2518",
-        "type": "ui_group",
-        "name": "Raw Data",
-        "tab": "7c22f36f.fb7a4c",
-        "order": 1,
-        "disp": true,
-        "width": "6",
-        "collapse": false
-    },
-    {
         "id": "67d6e9be.8270f8",
         "type": "ui_group",
         "name": "Bunch Data",
@@ -260,6 +250,27 @@
         "disp": true,
         "width": "6",
         "collapse": false
+    },
+    {
+        "id": "79250bf3.365cc4",
+        "type": "mqtt-broker",
+        "name": "MQTT Broker",
+        "broker": "$(MQTTSERVERIP)",
+        "port": "1883",
+        "clientid": "$(MQTTCLIENTID)",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
     },
     {
         "id": "30f384ea.cf21fc",
@@ -817,7 +828,8 @@
         "y": 400,
         "wires": [
             [
-                "a3ff8e5.b79de7"
+                "a3ff8e5.b79de7",
+                "cbea1b0d.f5d6d8"
             ]
         ]
     },
@@ -2210,7 +2222,7 @@
         "payload": "MQTTDEVICEA",
         "payloadType": "env",
         "x": 120,
-        "y": 20,
+        "y": 40,
         "wires": [
             [
                 "fdfbcac7.35b388"
@@ -2232,40 +2244,11 @@
         "wires": []
     },
     {
-        "id": "ea414af.510a1b8",
-        "type": "inject",
-        "z": "c4285970.3276d8",
-        "name": "deviceB",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "deviceB",
-        "payload": "MQTTDEVICEB",
-        "payloadType": "env",
-        "x": 120,
-        "y": 60,
-        "wires": [
-            [
-                "fdfbcac7.35b388"
-            ]
-        ]
-    },
-    {
         "id": "af9642ae.0c0da",
         "type": "function",
         "z": "c4285970.3276d8",
         "name": "Device Names",
-        "func": "msg.payload['deviceAName'] = flow.get('deviceAProps').name;\nmsg.payload['deviceBName'] = flow.get('deviceBProps').name;\nreturn msg;",
+        "func": "msg.payload['deviceAName'] = flow.get('deviceAProps').name;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2305,12 +2288,12 @@
         "id": "dae72c23.452bd",
         "type": "ui_chart",
         "z": "5f562f66.a301e",
-        "name": "RawDataChart",
-        "group": "aac9ca27.7c2518",
+        "name": "I-Q Plot",
+        "group": "67d6e9be.8270f8",
         "order": 0,
         "width": 0,
         "height": 0,
-        "label": "Raw Data",
+        "label": "I-Q Plot",
         "chartType": "line",
         "legend": "false",
         "xformat": "x",
@@ -2337,8 +2320,8 @@
             "#c5b0d5"
         ],
         "outputs": 1,
-        "x": 760,
-        "y": 740,
+        "x": 780,
+        "y": 680,
         "wires": [
             []
         ]
@@ -2492,7 +2475,7 @@
         "type": "function",
         "z": "5f562f66.a301e",
         "name": "Read Traces",
-        "func": "var traceI = [];\nvar traceQ = [];\nvar dataView = new DataView(new ArrayBuffer(4));\nvar ndataPts = 176;\nfor (var irow = 0; irow < ndataPts; ++irow)\n{\n    dataView.setUint8(0, msg.payload[irow * 4]);\n    dataView.setUint8(1, msg.payload[irow * 4 + 1]);\n    dataView.setUint8(2, msg.payload[irow * 4 + 2]);\n    dataView.setUint8(3, msg.payload[irow * 4 + 3]);\n    traceI[irow] = dataView.getFloat32(0 , true);\n    dataView.setUint8(0, msg.payload[(irow + ndataPts) * 4]);\n    dataView.setUint8(1, msg.payload[(irow + ndataPts) * 4 + 1]);\n    dataView.setUint8(2, msg.payload[(irow + ndataPts) * 4 + 2]);\n    dataView.setUint8(3, msg.payload[(irow + ndataPts) * 4 + 3]);\n    traceQ[irow] = dataView.getFloat32(0 , true);\n}\nvar rawTraceDataChart = [\n    {\n        series : [\"TraceI\", \"TraceQ\"],\n        data   : [[],[]],\n        labels : [\"\"]\n    }\n];\nfor (var irow = 0; irow < traceI.length; ++irow)\n{\n    rawTraceDataChart[0].data[0][irow] = {\"x\":irow,\"y\":traceI[irow]};\n    rawTraceDataChart[0].data[1][irow] = {\"x\":irow,\"y\":traceQ[irow]};\n}\nrawTraceDataMsg = {topic:'rawTraceDataMsg',payload: rawTraceDataChart};\nreturn [{topic : \"traceData\",payload:{'traceI' : traceI, 'traceQ' : traceQ}},rawTraceDataMsg];",
+        "func": "var traceI = [];\nvar traceQ = [];\nvar dataView = new DataView(new ArrayBuffer(4));\nvar ndataPts = 176;\nfor (var irow = 0; irow < ndataPts; ++irow)\n{\n    dataView.setUint8(0, msg.payload[irow * 4]);\n    dataView.setUint8(1, msg.payload[irow * 4 + 1]);\n    dataView.setUint8(2, msg.payload[irow * 4 + 2]);\n    dataView.setUint8(3, msg.payload[irow * 4 + 3]);\n    traceI[irow] = dataView.getFloat32(0 , true);\n    dataView.setUint8(0, msg.payload[(irow + ndataPts) * 4]);\n    dataView.setUint8(1, msg.payload[(irow + ndataPts) * 4 + 1]);\n    dataView.setUint8(2, msg.payload[(irow + ndataPts) * 4 + 2]);\n    dataView.setUint8(3, msg.payload[(irow + ndataPts) * 4 + 3]);\n    traceQ[irow] = dataView.getFloat32(0 , true);\n}\nvar iqDataChart = [\n    {\n        series : [\"TraceI\", \"TraceQ\"],\n        data   : [[],[]],\n        labels : [\"\"]\n    }\n];\nfor (var irow = 0; irow < traceI.length; ++irow)\n{\n    iqDataChart[0].data[0][irow] = {\"x\":irow,\"y\":traceI[irow]};\n    iqDataChart[0].data[1][irow] = {\"x\":irow,\"y\":traceQ[irow]};\n}\niqDataMsg = {topic:'iqDataMsg',payload: iqDataChart};\nreturn [{topic : \"traceData\",payload:{'traceI' : traceI, 'traceQ' : traceQ}},iqDataMsg];",
         "outputs": 2,
         "noerr": 0,
         "initialize": "",
@@ -2518,7 +2501,7 @@
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 750,
+        "x": 650,
         "y": 540,
         "wires": []
     },
@@ -2535,7 +2518,9 @@
         "x": 800,
         "y": 620,
         "wires": [
-            [],
+            [
+                "9115ea87.0ca208"
+            ],
             [
                 "85b7adf3.4cecf"
             ],
@@ -2587,7 +2572,7 @@
         ],
         "outputs": 1,
         "x": 1070,
-        "y": 660,
+        "y": 600,
         "wires": [
             []
         ]
@@ -2629,7 +2614,7 @@
         ],
         "outputs": 1,
         "x": 1070,
-        "y": 700,
+        "y": 640,
         "wires": [
             []
         ]
@@ -2671,7 +2656,7 @@
         ],
         "outputs": 1,
         "x": 1060,
-        "y": 740,
+        "y": 680,
         "wires": [
             []
         ]
@@ -2681,11 +2666,11 @@
         "type": "ui_chart",
         "z": "5f562f66.a301e",
         "name": "ModeChart",
-        "group": "aac9ca27.7c2518",
+        "group": "67d6e9be.8270f8",
         "order": 0,
         "width": 0,
         "height": 0,
-        "label": "Mode Data",
+        "label": "Mode Spectrum",
         "chartType": "line",
         "legend": "false",
         "xformat": "x",
@@ -2713,7 +2698,7 @@
         ],
         "outputs": 1,
         "x": 1050,
-        "y": 780,
+        "y": 720,
         "wires": [
             []
         ]
@@ -2775,5 +2760,35 @@
                 "efdbccd0.f2f82"
             ]
         ]
+    },
+    {
+        "id": "5023092b.a0fe38",
+        "type": "mqtt in",
+        "z": "5f562f66.a301e",
+        "name": "Subscribe DeviceA",
+        "topic": "$(MQTTDEVICEA)",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "79250bf3.365cc4",
+        "x": 110,
+        "y": 140,
+        "wires": [
+            [
+                "257906ae.f6991a"
+            ]
+        ]
+    },
+    {
+        "id": "cbea1b0d.f5d6d8",
+        "type": "mqtt out",
+        "z": "5f562f66.a301e",
+        "name": "Publish Readings",
+        "topic": "",
+        "qos": "0",
+        "retain": "",
+        "broker": "79250bf3.365cc4",
+        "x": 1270,
+        "y": 400,
+        "wires": []
     }
 ]

@@ -12,8 +12,8 @@ rfFreq = 100.0
 sampleRate = 1000.0
 iTraceOffset = 0.000;
 qTraceOffset = 0.000;
-mixer6OrderCal100mV = 0.0
-bunchCurrentTo100mV = 0.710
+mixer6OrderCal100mV = 0.0078125
+bunchCurrentTo100mV = 0.648
 
 rm = visa.ResourceManager('@py')
 rp = rm.open_resource('TCPIP::{}::{}::SOCKET'.format('192.168.10.10', 5025), read_termination = '\n')
