@@ -5,7 +5,7 @@ import random
 import sys
 import struct
 
-timePos = 250
+timePos = 385
 timeRef = 10
 loopDelay = 0.5
 rfFreq = 99.5
@@ -13,26 +13,26 @@ sampleRate = 1000.0
 iTraceOffset = 0.000;
 qTraceOffset = 0.000;
 mixer6OrderCal100mV = 0.0 #0.0078125
-bunchCurrentTo100mV = 1.8466 #1.02
+bunchCurrentTo100mV = 2.11559 #1.02
 
 rm = visa.ResourceManager('@py')
 rp = rm.open_resource('TCPIP::{}::{}::SOCKET'.format('192.168.10.10', 5025), read_termination = '\n')
 rp.write("*RST")
 rp.write("CHAN1:STAT ON;")
 rp.write("CHAN1:POS 0;")
-rp.write("CHAN1:COUP DC;")
+rp.write("CHAN1:COUP DCLimit;")
 rp.write("CHAN1:SCAL 0.05;")
 rp.write("CHAN1:POL NORM;")
 
 rp.write("CHAN2:STAT ON;")
 rp.write("CHAN2:POS 0;")
-rp.write("CHAN2:COUP DC;")
+rp.write("CHAN2:COUP DCLimit;")
 rp.write("CHAN2:SCAL 0.02;")
 rp.write("CHAN2:POL NORM;")
 
 rp.write("CHAN4:STAT ON;")
 rp.write("CHAN4:POS 0;")
-rp.write("CHAN4:COUP DC;")
+rp.write("CHAN4:COUP DCLimit;")
 rp.write("CHAN4:SCAL 1.0;")
 rp.write("CHAN4:POL NORM;")
 
