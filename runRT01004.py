@@ -7,7 +7,7 @@ import struct
 
 timePos = 385
 timeRef = 10
-loopDelay = 0.5
+loopDelay = 1.0
 rfFreq = 99.5
 sampleRate = 1000.0
 iTraceOffset = 0.000;
